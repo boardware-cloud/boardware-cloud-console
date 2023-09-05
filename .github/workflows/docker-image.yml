@@ -25,4 +25,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}:latest
+          tags: ${{ vars.DOCKERHUB_HOST }}/${{ vars.DOCKER_NAME }}:latest
