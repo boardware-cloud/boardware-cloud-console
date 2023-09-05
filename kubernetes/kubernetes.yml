@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: boardware-cloud-console
-          image: registry.boardware.com/bwc/core@sha256:e132b3aa02cdd2691e283989a060de894d3f35f7cfd8a77625240eecf96c9581
+          image: registry.boardware.com/bwc/core@sha256:659dd7b5
           ports:
             - containerPort: 80
               name: http
