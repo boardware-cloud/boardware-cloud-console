@@ -102,28 +102,6 @@ export default function SignIn() {
         messageApi.error("Email not found");
       });
   };
-  const signin = () => {
-    if (!verificationCode) {
-      return;
-    }
-    accountApi
-      .createSession({
-        createSessionRequest: {
-          email: email,
-          password: sha256(password),
-          verificationCode: verificationCode,
-        },
-      })
-      .then((e) => {
-        localStorage.setItem("token", e.token!);
-        window.location.href = "/dashboard/uptime";
-      })
-      .catch((e: ResponseError) => {
-        e.response.json().then((j) => {
-          messageApi.error(j.message);
-        });
-      });
-  };
   const verificationPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!password) {

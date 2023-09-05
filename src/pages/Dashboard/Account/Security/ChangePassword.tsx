@@ -50,7 +50,8 @@ const ChangePassword: React.FC = () => {
           type="password"
           value={oldPassword}
           onChange={(e) => setOldPassword(e.target.value)}
-          label="Old password"></TextField>
+          label="Old password"
+          helperText={passwordError ? "Wrong password" : ""}></TextField>
       </Grid>
       <Grid item>
         <TextField

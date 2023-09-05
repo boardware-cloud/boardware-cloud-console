@@ -5,6 +5,7 @@ import {
   Button,
   Divider,
   FormControl,
+  FormHelperText,
   Grid,
   IconButton,
   InputLabel,
@@ -212,6 +213,7 @@ const MonitorForm: React.FC<IProps> = (props) => {
             onChange={(e) => setUrl(e.target.value)}
             id="outlined-required"
             label="Url"
+            helperText="http(s)://xxx.xxx.xxx/xxx"
           />
         </Grid>
         <Grid item xs={2}>
