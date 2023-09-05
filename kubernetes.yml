@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boardware-cloud-console
+  labels:
+    app: boardware-cloud-console
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: boardware-cloud-console
+  template:
+    metadata:
+      labels:
+        app: boardware-cloud-console
+    spec:
+      containers:
+        - name: boardware-cloud-console
+          image: registry.boardware.com/bwc/boardware-cloud-console:0.0.21
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health/live
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health/ready
+              port: 80
+              scheme: HTTP
+      imagePullSecrets:
+        - name: harbor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: boardware-cloud-console-svc
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: boardware-cloud-console
