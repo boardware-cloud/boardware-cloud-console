@@ -25,14 +25,3 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}:latest
-      - name: Update docker
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}
-            sudo docker stop ${{ vars.DOCKER_NAME }}-uat
-            sudo docker rm ${{ vars.DOCKER_NAME }}-uat
-            sudo docker run -dp 9081:80 --name ${{ vars.DOCKER_NAME }}-uat ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}
