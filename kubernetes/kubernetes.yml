@@ -39,15 +39,3 @@ spec:
               scheme: HTTP
       imagePullSecrets:
         - name: harbor
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: boardware-cloud-console-svc
-spec:
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  selector:
-    app: boardware-cloud-console
