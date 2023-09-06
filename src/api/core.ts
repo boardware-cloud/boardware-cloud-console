@@ -4,7 +4,7 @@ import {
   ConfigurationParameters,
   VerificationApi,
   TicketApi,
-} from "core-ts-sdk";
+} from "@boardware/core-ts-sdk";
 
 export const token = localStorage.getItem("token");
 

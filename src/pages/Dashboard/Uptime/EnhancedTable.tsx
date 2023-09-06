@@ -16,7 +16,7 @@ import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { Monitor } from "argus-ts-sdk";
+import { Monitor } from "@boardware/argus-ts-sdk";
 import SettingsIcon from "@mui/icons-material/Settings";
 import monitorApi from "../../../api/monitor";
 interface Data {

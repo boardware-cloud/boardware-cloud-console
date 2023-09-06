@@ -9,7 +9,7 @@ import {
   IconButton,
   Hidden,
 } from "@mui/material";
-import { Pair } from "argus-ts-sdk";
+import { Pair } from "@boardware/argus-ts-sdk";
 import React, { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 

@@ -9,7 +9,7 @@ import {
   Select,
   Stack,
 } from "@mui/material";
-import { BodyForm, ContentType } from "argus-ts-sdk";
+import { BodyForm, ContentType } from "@boardware/argus-ts-sdk";
 import React, { useMemo } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";

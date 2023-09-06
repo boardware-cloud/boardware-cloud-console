@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import monitorApi from "../../../../api/monitor";
 import MonitorForm from "../../../../components/MonitorForm";
-import { Monitor } from "argus-ts-sdk";
+import { Monitor } from "@boardware/argus-ts-sdk";
 
 const Create: React.FC = () => {
   const navigate = useNavigate();

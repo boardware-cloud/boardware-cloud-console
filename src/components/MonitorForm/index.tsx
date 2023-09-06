@@ -30,7 +30,7 @@ import {
   ContentType,
   Pair,
   HttpBody,
-} from "argus-ts-sdk";
+} from "@boardware/argus-ts-sdk";
 import Settings from "./Settings";
 import Headers from "./Headers";
 import Notifications from "./Notifications";

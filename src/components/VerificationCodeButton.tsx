@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { verificationApi } from "../api/core";
-import { ResponseError, VerificationCodePurpose } from "core-ts-sdk";
+import { ResponseError, VerificationCodePurpose } from "@boardware/core-ts-sdk";
 
 interface IProps {
   code: string;

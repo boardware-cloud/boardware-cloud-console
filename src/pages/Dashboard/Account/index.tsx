@@ -17,12 +17,12 @@ import {
   Tabs,
 } from "@mui/material";
 import { message } from "antd";
-import { VerificationCodePurpose } from "core-ts-sdk";
+import { VerificationCodePurpose } from "@boardware/core-ts-sdk";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import accountApi, { verificationApi } from "../../../api/core";
 import { sha256 } from "../../../utils/account";
-import { ResponseError } from "argus-ts-sdk";
+import { ResponseError } from "@boardware/argus-ts-sdk";
 
 const Password: React.FC<{ show: boolean }> = ({ show }) => {
   const nav = useNavigate();

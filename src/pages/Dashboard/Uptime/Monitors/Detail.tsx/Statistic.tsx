@@ -2,7 +2,7 @@ import React from "react";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
-import { MonitoringRecord, MonitoringResult } from "argus-ts-sdk";
+import { MonitoringRecord, MonitoringResult } from "@boardware/argus-ts-sdk";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

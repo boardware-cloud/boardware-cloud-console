@@ -10,11 +10,11 @@ import Container from "@mui/material/Container";
 import { sha256 } from "../../utils/account";
 import Copyright from "../../components/Copyright";
 import { message } from "antd";
-import { ResponseError } from "argus-ts-sdk";
+import { ResponseError } from "@boardware/argus-ts-sdk";
 import accountApi, { ticketApi } from "../../api/core";
 import { Chip, Paper } from "@mui/material";
 import VerificationCodeButton from "../../components/VerificationCodeButton";
-import { TicketType, VerificationCodePurpose } from "core-ts-sdk";
+import { TicketType, VerificationCodePurpose } from "@boardware/core-ts-sdk";
 import { webauthnTicket } from "../../utils/webauthn";
 
 enum Stage {

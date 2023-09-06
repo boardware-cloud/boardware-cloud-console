@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import monitorApi from "../../../../../api/monitor";
-import { Monitor, MonitorStatus, MonitoringRecord } from "argus-ts-sdk";
+import {
+  Monitor,
+  MonitorStatus,
+  MonitoringRecord,
+} from "@boardware/argus-ts-sdk";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import {
   Button,

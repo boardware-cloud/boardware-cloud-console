@@ -13,7 +13,7 @@ import {
   Grid,
   Link,
 } from "@mui/material";
-import { VerificationCodePurpose } from "core-ts-sdk";
+import { VerificationCodePurpose } from "@boardware/core-ts-sdk";
 import React, { useCallback, useState } from "react";
 import accountApi, { verificationApi } from "../../api/core";
 import Copyright from "../../components/Copyright";
@@ -21,7 +21,7 @@ import LockResetIcon from "@mui/icons-material/LockReset";
 import { sha256 } from "../../utils/account";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
-import { ResponseError } from "argus-ts-sdk";
+import { ResponseError } from "@boardware/argus-ts-sdk";
 
 const ForgotPassword: React.FC = () => {
   const nav = useNavigate();

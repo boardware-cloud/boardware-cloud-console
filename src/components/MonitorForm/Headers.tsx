@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import KeyValueTable from "../KeyValueTable";
-import { Pair } from "argus-ts-sdk";
+import { Pair } from "@boardware/argus-ts-sdk";
 
 interface IProps {
   show?: boolean;

@@ -17,7 +17,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Password from "../../../../components/Password";
 import accountApi from "../../../../api/core";
-import { Account } from "core-ts-sdk";
+import { Account } from "@boardware/core-ts-sdk";
 import { QRCode } from "antd";
 import { useNavigate } from "react-router-dom";
 

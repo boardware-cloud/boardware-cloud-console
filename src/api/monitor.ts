@@ -2,7 +2,7 @@ import {
   MonitorApi,
   Configuration,
   ConfigurationParameters,
-} from "argus-ts-sdk";
+} from "@boardware/argus-ts-sdk";
 
 const token = localStorage.getItem("token");
 

@@ -14,7 +14,7 @@ import {
   ListItemText,
   ListSubheader,
 } from "@mui/material";
-import { Account, WebAuthn } from "core-ts-sdk";
+import { Account, WebAuthn } from "@boardware/core-ts-sdk";
 import React, { useEffect, useMemo, useState } from "react";
 import accountApi, { basePath, token } from "../../../../api/core";
 import { Decode, Encode } from "arraybuffer-encoding/base64/url";
