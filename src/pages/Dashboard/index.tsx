@@ -84,6 +84,10 @@ export default function Dashboard() {
     logout();
     nav("/signin");
   };
+  React.useEffect(() => {
+    if (window.location.pathname === "/dashboard")
+      nav("/dashboard/account/security");
+  }, []);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
@@ -133,16 +137,6 @@ export default function Dashboard() {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}>
-                {/* <MenuItem
-                  onClick={() => {
-                    setAnchorEl(null);
-                    nav("/dashboard/account");
-                  }}>
-                  <ListItemIcon>
-                    <SettingsIcon />
-                  </ListItemIcon>
-                  Setting
-                </MenuItem> */}
                 <MenuItem
                   onClick={() => {
                     setAnchorEl(null);

@@ -44,8 +44,11 @@ const TwoFactor: React.FC = () => {
   const hasTotp = useMemo(() => {
     return factors.findIndex((factor) => factor === "TOTP") !== -1;
   }, [factors]);
-  useEffect(() => {
+  const getAccount = () => {
     accountApi.getAccount().then((account) => setAccount(account));
+  };
+  useEffect(() => {
+    getAccount();
   }, []);
   useEffect(() => {
     if (!account) return;
@@ -58,6 +61,12 @@ const TwoFactor: React.FC = () => {
   const getWebAuths = () => {
     accountApi.listWebAuthn().then((webAuths) => {
       setWebAuths(webAuths);
+    });
+  };
+  const deleteTotp = () => {
+    if (!account) return;
+    accountApi.deleteTotp().then(() => {
+      getAccount();
     });
   };
   useEffect(() => {
@@ -235,13 +244,21 @@ const TwoFactor: React.FC = () => {
           </Collapse>
           <ListItem
             secondaryAction={
-              <IconButton
-                onClick={() => {
-                  nav("/dashboard/account/security/totp");
-                }}
-                edge="end">
-                <AppSettingsAltIcon />
-              </IconButton>
+              <>
+                {hasTotp ? (
+                  <IconButton onClick={deleteTotp} edge="end">
+                    <DeleteForeverIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    onClick={() => {
+                      nav("/dashboard/account/security/totp");
+                    }}
+                    edge="end">
+                    <AppSettingsAltIcon />
+                  </IconButton>
+                )}
+              </>
             }>
             <ListItemIcon>
               <AccessTimeIcon />

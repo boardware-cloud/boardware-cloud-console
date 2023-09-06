@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "./App.css";
-import Root from "./pages";
-import Login from "./pages/Signin";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Root from "./pages";
+import Signin from "./pages/Signin";
 import Dashboard from "./pages/Dashboard";
 import Uptime from "./pages/Dashboard/Uptime";
 import Create from "./pages/Dashboard/Uptime/Create";
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/signin",
-    element: <Login />,
+    element: <Signin />,
   },
   {
     path: "/signup",

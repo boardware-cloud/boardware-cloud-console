@@ -68,19 +68,20 @@ export default function SignIn() {
             localStorage.setItem("token", e.token!);
             setTimeout(() => {
               window.location.href = "/dashboard/uptime";
-            }, 1000);
+            }, 250);
           })
           .catch((e: ResponseError) => {
             e.response.json().then((j) => {
               messageApi.error(j.message);
             });
           });
-      }, 1100);
+      }, 250);
     }
   }, [tickets]);
   const [stage, setStage] = React.useState<Stage>(Stage.EMAIL);
   const [verificationCode, setVerificationCode] = React.useState("");
   const [totpCode, setTotpCode] = React.useState("");
+
   const [totpError, setTotpError] = React.useState(false);
   const hasTotp = React.useMemo(() => {
     return factors.findIndex((fa) => fa === "TOTP") !== -1;
@@ -99,7 +100,7 @@ export default function SignIn() {
       })
       .catch(() => {
         setEmailError(true);
-        messageApi.error("Email not found");
+        messageApi.error("Email not found!");
       });
   };
   const verificationPassword = (event: React.FormEvent<HTMLFormElement>) => {
@@ -150,6 +151,10 @@ export default function SignIn() {
         );
       });
   };
+  React.useEffect(() => {
+    if (totpCode.length !== 6) return;
+    totpSignin();
+  }, [totpCode]);
   return (
     <Container
       component="main"
