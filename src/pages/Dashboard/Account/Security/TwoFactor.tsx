@@ -1,4 +1,8 @@
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import {
+  CheckCircleOutlined,
+  ExpandLess,
+  ExpandMore,
+} from "@mui/icons-material";
 import {
   Button,
   Collapse,
@@ -19,6 +23,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import accountApi, { basePath, token } from "../../../../api/core";
 import { Decode, Encode } from "arraybuffer-encoding/base64/url";
 import { useNavigate } from "react-router-dom";
+import { Space, Tag } from "antd";
 // Icon
 import PrivacyTipIcon from "@mui/icons-material/PrivacyTip";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -35,14 +40,21 @@ const TwoFactor: React.FC = () => {
   const [webAuthnName, setWebAuthnName] = useState("");
   const [webAuths, setWebAuths] = useState<WebAuthn[]>([]);
   const [account, setAccount] = useState<Account>();
+  const [factors, setFactors] = useState<string[]>([]);
   const hasTotp = useMemo(() => {
-    if (!account) return false;
-    if (!account) return false;
-    return true;
-  }, [account]);
+    return factors.findIndex((factor) => factor === "TOTP") !== -1;
+  }, [factors]);
   useEffect(() => {
     accountApi.getAccount().then((account) => setAccount(account));
   }, []);
+  useEffect(() => {
+    if (!account) return;
+    accountApi
+      .getAuthentication({ email: account.email })
+      .then(({ factors }) => {
+        setFactors(factors);
+      });
+  }, [account]);
   const getWebAuths = () => {
     accountApi.listWebAuthn().then((webAuths) => {
       setWebAuths(webAuths);
@@ -140,7 +152,17 @@ const TwoFactor: React.FC = () => {
               <PrivacyTipIcon />
             </ListItemIcon>
             <ListItemText
-              primary="Security keys"
+              primary={
+                <Space>
+                  <span>Security keys</span>
+                  {webAuths.length !== 0 && (
+                    <span>
+                      <Tag color="success">Configured</Tag>
+                      <Tag color="blue">{webAuths.length} keys</Tag>
+                    </span>
+                  )}
+                </Space>
+              }
               secondary={
                 "Security keys are hardware devices that can be used as your second factor of authentication."
               }
@@ -225,7 +247,12 @@ const TwoFactor: React.FC = () => {
               <AccessTimeIcon />
             </ListItemIcon>
             <ListItemText
-              primary="TOTP"
+              primary={
+                <Space>
+                  <span>TOTP</span>
+                  {hasTotp && <Tag color="success">Configured</Tag>}
+                </Space>
+              }
               secondary={"Time-based one-time password."}
             />
           </ListItem>
