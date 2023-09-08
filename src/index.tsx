@@ -15,6 +15,7 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Totp from "./pages/Dashboard/Account/totp";
 import Security from "./pages/Dashboard/Account/Security";
+import Admin from "./pages/Dashboard/Admin";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
       { path: "account", element: <Account /> },
       { path: "account/security", element: <Security /> },
       { path: "account/security/totp", element: <Totp /> },
+      { path: "admin", element: <Admin /> },
     ],
   },
   {

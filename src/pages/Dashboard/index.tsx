@@ -20,7 +20,7 @@ import { logout } from "../../utils/account";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddModeratorIcon from "@mui/icons-material/AddModerator";
 
-const drawerWidth: number = 240;
+const drawerWidth: number = 200;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
