@@ -17,6 +17,11 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { Account, WebAuthn } from "@boardware/core-ts-sdk";
 import React, { useEffect, useMemo, useState } from "react";
@@ -41,6 +46,8 @@ const TwoFactor: React.FC = () => {
   const [webAuths, setWebAuths] = useState<WebAuthn[]>([]);
   const [account, setAccount] = useState<Account>();
   const [factors, setFactors] = useState<string[]>([]);
+  const [showDeleteTotp, setShowDeleteTotp] = useState(false);
+  const [deleteWebAuthnTarget, setDeleteWebAuthnTarget] = useState<string>();
   const hasTotp = useMemo(() => {
     return factors.findIndex((factor) => factor === "TOTP") !== -1;
   }, [factors]);
@@ -49,6 +56,7 @@ const TwoFactor: React.FC = () => {
   };
   useEffect(() => {
     getAccount();
+    getWebAuths();
   }, []);
   useEffect(() => {
     if (!account) return;
@@ -69,9 +77,6 @@ const TwoFactor: React.FC = () => {
       getAccount();
     });
   };
-  useEffect(() => {
-    getWebAuths();
-  }, []);
   const deleteWebauthn = (id: string) => {
     accountApi.deleteWebAuthn({ id: id }).then(() => {
       setWebAuths(webAuths.filter((web) => web.id !== id));
@@ -179,13 +184,13 @@ const TwoFactor: React.FC = () => {
           </ListItem>
           <Collapse in={openWebAuthn} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              {webAuths.map((webAuth, i) => {
+              {webAuths.map((webAuth) => {
                 return (
                   <ListItem
-                    key={i}
+                    key={webAuth.id}
                     secondaryAction={
                       <IconButton
-                        onClick={() => deleteWebauthn(webAuth.id)}
+                        onClick={() => setDeleteWebAuthnTarget(webAuth.id)}
                         edge="end">
                         <DeleteForeverIcon />
                       </IconButton>
@@ -246,7 +251,9 @@ const TwoFactor: React.FC = () => {
             secondaryAction={
               <>
                 {hasTotp ? (
-                  <IconButton onClick={deleteTotp} edge="end">
+                  <IconButton
+                    onClick={() => setShowDeleteTotp(true)}
+                    edge="end">
                     <DeleteForeverIcon />
                   </IconButton>
                 ) : (
@@ -276,6 +283,48 @@ const TwoFactor: React.FC = () => {
           <Divider variant="inset" component="li" />
         </List>
       </Grid>
+      <Dialog
+        onClose={() => setShowDeleteTotp(false)}
+        open={showDeleteTotp}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm delete TOTP</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setShowDeleteTotp(false)} autoFocus>
+            Cancel
+          </Button>
+          <Button
+            color="warning"
+            onClick={() => {
+              deleteTotp();
+              setShowDeleteTotp(false);
+            }}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        onClose={() => setDeleteWebAuthnTarget(undefined)}
+        open={deleteWebAuthnTarget !== undefined}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">
+          Confirm delete Security keys
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setDeleteWebAuthnTarget(undefined)} autoFocus>
+            Cancel
+          </Button>
+          <Button
+            color="warning"
+            onClick={() => {
+              deleteWebauthn(deleteWebAuthnTarget!);
+              setDeleteWebAuthnTarget(undefined);
+            }}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };

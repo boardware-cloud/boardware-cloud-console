@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
@@ -70,8 +70,6 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-const defaultTheme = createTheme();
-
 export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const nav = useNavigate();
@@ -84,115 +82,113 @@ export default function Dashboard() {
     logout();
     nav("/signin");
   };
-  React.useEffect(() => {
-    if (window.location.pathname === "/dashboard")
-      nav("/dashboard/account/security");
-  }, []);
+  // React.useEffect(() => {
+  //   if (window.location.pathname === "/dashboard")
+  //     nav("/dashboard/account/security");
+  // }, []);
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: "24px",
-            }}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
-              }}>
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}>
-              Boardware Cloud Dashboard
-            </Typography>
-            <div>
-              <IconButton
-                aria-controls={showAccountMenu ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={showAccountMenu ? "true" : undefined}
-                onClick={(event) => {
-                  setAnchorEl(event.currentTarget);
-                }}
-                color="inherit">
-                <AccountCircleIcon />
-              </IconButton>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={showAccountMenu}
-                onClose={() => {
-                  setAnchorEl(null);
-                }}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}>
-                <MenuItem
-                  onClick={() => {
-                    setAnchorEl(null);
-                    nav("/dashboard/account/security");
-                  }}>
-                  <ListItemIcon>
-                    <AddModeratorIcon />
-                  </ListItemIcon>
-                  Security
-                </MenuItem>
-                <MenuItem onClick={singout}>
-                  <ListItemIcon>
-                    <LogoutIcon />
-                  </ListItemIcon>
-                  Logout
-                </MenuItem>
-              </Menu>
-            </div>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              px: [1],
-            }}>
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
-        <Box
-          component="main"
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar position="absolute" open={open}>
+        <Toolbar
           sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
+            pr: "24px",
           }}>
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
-            <Outlet></Outlet>
-          </Container>
-        </Box>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer}
+            sx={{
+              marginRight: "36px",
+              ...(open && { display: "none" }),
+            }}>
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            sx={{ flexGrow: 1 }}>
+            Boardware Cloud Dashboard
+          </Typography>
+          <div>
+            <IconButton
+              aria-controls={showAccountMenu ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={showAccountMenu ? "true" : undefined}
+              onClick={(event) => {
+                setAnchorEl(event.currentTarget);
+              }}
+              color="inherit">
+              <AccountCircleIcon />
+            </IconButton>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={showAccountMenu}
+              onClose={() => {
+                setAnchorEl(null);
+              }}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}>
+              <MenuItem
+                onClick={() => {
+                  setAnchorEl(null);
+                  nav("/dashboard/account/security");
+                }}>
+                <ListItemIcon>
+                  <AddModeratorIcon />
+                </ListItemIcon>
+                Security
+              </MenuItem>
+              <MenuItem onClick={singout}>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                Logout
+              </MenuItem>
+            </Menu>
+          </div>
+        </Toolbar>
+      </AppBar>
+      <Drawer variant="permanent" open={open}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            px: [1],
+          }}>
+          <IconButton onClick={toggleDrawer}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Toolbar>
+        <Divider />
+        <List component="nav">
+          {mainListItems}
+          <Divider sx={{ my: 1 }} />
+          {secondaryListItems}
+        </List>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: "100vh",
+          overflow: "auto",
+        }}>
+        <Toolbar />
+        <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
+          <Outlet></Outlet>
+        </Container>
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 }

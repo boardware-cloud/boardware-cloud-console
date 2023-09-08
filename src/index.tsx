@@ -25,45 +25,45 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
-    children: [],
-  },
-  {
-    path: "/signin",
-    element: <Signin />,
-  },
-  {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    path: "/forgotPassword",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/dashboard",
-    element: <Dashboard></Dashboard>,
     children: [
-      { path: "uptime", element: <Uptime></Uptime> },
       {
-        path: "uptime/create",
-        element: <Create />,
+        path: "signin",
+        element: <Signin />,
       },
-      { path: "uptime/monitors/:id", element: <MonitorDetail /> },
+      {
+        path: "signup",
+        element: <Signup />,
+      },
+      {
+        path: "forgotPassword",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard></Dashboard>,
+        children: [
+          { path: "uptime", element: <Uptime></Uptime> },
+          {
+            path: "uptime/create",
+            element: <Create />,
+          },
+          { path: "uptime/monitors/:id", element: <MonitorDetail /> },
 
-      {
-        path: "uptime/monitors/:id/edit",
-        element: <Edit />,
+          {
+            path: "uptime/monitors/:id/edit",
+            element: <Edit />,
+          },
+          { path: "account", element: <Account /> },
+          { path: "account/security", element: <Security /> },
+          { path: "account/security/totp", element: <Totp /> },
+          { path: "admin", element: <Admin /> },
+        ],
       },
-      { path: "account", element: <Account /> },
-      { path: "account/security", element: <Security /> },
-      { path: "account/security/totp", element: <Totp /> },
-      { path: "admin", element: <Admin /> },
     ],
   },
   {
     path: "*",
     element: <Root />,
-    children: [],
   },
 ]);
 root.render(

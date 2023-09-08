@@ -16,7 +16,7 @@ function Root() {
       .catch(() => {
         navigate("/signin");
       });
-  });
+  }, []);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Outlet />
