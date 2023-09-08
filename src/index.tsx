@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
 import Root from "./pages";
 import Signin from "./pages/Signin";
 import Dashboard from "./pages/Dashboard";
@@ -58,13 +62,25 @@ const router = createBrowserRouter([
           { path: "admin", element: <Admin /> },
         ],
       },
+      {
+        path: "*",
+        element: <NotFound></NotFound>,
+      },
+      {
+        path: "",
+        element: <NotFound></NotFound>,
+      },
     ],
   },
-  {
-    path: "*",
-    element: <Root />,
-  },
 ]);
+
+function NotFound() {
+  const nav = useNavigate();
+  useEffect(() => {
+    nav("/signin");
+  }, []);
+  return <div>Not Found</div>;
+}
 root.render(
   <React.StrictMode>
     <RouterProvider router={router} />

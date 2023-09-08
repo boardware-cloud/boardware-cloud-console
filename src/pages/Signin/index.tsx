@@ -188,6 +188,9 @@ export default function SignIn() {
             .then((ticket: any) =>
               setTickets((tickets) => [...tickets, ticket])
             )
+            .catch((e) => {
+              console.log(e);
+            })
             .finally(() => {
               setLoadingWebauthn(false);
             });
