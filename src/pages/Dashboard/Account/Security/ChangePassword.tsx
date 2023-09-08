@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import SectionTitle from "../../../../components/SectionTitle";
 import accountApi from "../../../../api/core";
 import { sha256 } from "../../../../utils/account";
+import { onEnter } from "../../../../utils/keyboard";
 
 const ChangePassword: React.FC = () => {
   const [oldPassword, setOldPassword] = useState("");
@@ -10,6 +11,7 @@ const ChangePassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmError, setConfirmError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+
   const updatePassword = () => {
     if (newPassword !== confirmPassword || !newPassword) {
       setConfirmError(true);
@@ -45,6 +47,9 @@ const ChangePassword: React.FC = () => {
       <Grid item>
         <TextField
           size="small"
+          onKeyDown={onEnter(() => {
+            updatePassword();
+          })}
           style={{ width: 360 }}
           error={passwordError}
           type="password"
@@ -55,6 +60,9 @@ const ChangePassword: React.FC = () => {
       </Grid>
       <Grid item>
         <TextField
+          onKeyDown={onEnter(() => {
+            updatePassword();
+          })}
           style={{ width: 360 }}
           size="small"
           type="password"
@@ -69,6 +77,9 @@ const ChangePassword: React.FC = () => {
           style={{ width: 360 }}
           error={confirmError}
           type="password"
+          onKeyDown={onEnter(() => {
+            updatePassword();
+          })}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           label="Confirm new password"></TextField>
