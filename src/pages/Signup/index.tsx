@@ -10,6 +10,7 @@ import {
   InputAdornment,
   InputLabel,
   Link,
+  Paper,
   Typography,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
@@ -17,11 +18,11 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import accountApi, { verificationApi } from "../../api/core";
 import { VerificationCodePurpose } from "@boardware/core-ts-sdk";
-import Copyright from "../../components/Copyright";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { sha256 } from "../../utils/account";
 import { ResponseError } from "@boardware/argus-ts-sdk";
+import CenterForm from "../../components/CenterForm";
 
 const Signup: React.FC = () => {
   const nav = useNavigate();
@@ -79,8 +80,7 @@ const Signup: React.FC = () => {
       });
   };
   return (
-    <Container component="main" maxWidth="xs">
-      {contextHolder}
+    <CenterForm>
       <Box
         sx={{
           marginTop: 8,
@@ -163,8 +163,7 @@ const Signup: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
-    </Container>
+    </CenterForm>
   );
 };
 

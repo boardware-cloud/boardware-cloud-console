@@ -11,7 +11,7 @@ export default function Copyright(props: any) {
       {"Copyright © "}
       <Link color="inherit" href="https://www.boardware.com/">
         Boardware Cloud
-      </Link>
+      </Link>{" "}
       {new Date().getFullYear()}
     </Typography>
   );

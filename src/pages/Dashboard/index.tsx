@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, createTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
@@ -19,6 +19,7 @@ import { ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { logout } from "../../utils/account";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddModeratorIcon from "@mui/icons-material/AddModerator";
+import accountApi from "../../api/core";
 
 const drawerWidth: number = 200;
 
@@ -82,10 +83,17 @@ export default function Dashboard() {
     logout();
     nav("/signin");
   };
-  // React.useEffect(() => {
-  //   if (window.location.pathname === "/dashboard")
-  //     nav("/dashboard/account/security");
-  // }, []);
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    accountApi
+      .getAccount()
+      .then(() => {
+        navigate("/dashboard");
+      })
+      .catch(() => {
+        navigate("/signin");
+      });
+  }, []);
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

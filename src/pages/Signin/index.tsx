@@ -6,16 +6,23 @@ import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { sha256 } from "../../utils/account";
 import Copyright from "../../components/Copyright";
 import { message } from "antd";
 import { ResponseError } from "@boardware/argus-ts-sdk";
 import accountApi, { ticketApi } from "../../api/core";
-import { Chip, Paper } from "@mui/material";
+import { Alert, Chip } from "@mui/material";
 import VerificationCodeButton from "../../components/VerificationCodeButton";
-import { TicketType, VerificationCodePurpose } from "@boardware/core-ts-sdk";
+import {
+  Ticket,
+  TicketType,
+  VerificationCodePurpose,
+} from "@boardware/core-ts-sdk";
 import { webauthnTicket } from "../../utils/webauthn";
+import CenterForm from "../../components/CenterForm";
+import EmailIcon from "@mui/icons-material/Email";
+import FingerprintIcon from "@mui/icons-material/Fingerprint";
+import SmartphoneIcon from "@mui/icons-material/Smartphone";
 
 enum Stage {
   EMAIL,
@@ -52,16 +59,32 @@ export default function SignIn() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
   const [factors, setFactors] = React.useState<string[]>([]);
-  const [passwordTicket, setPasswordTicket] = React.useState("");
-  const [tickets, setTickets] = React.useState<string[]>([]);
+  const [tickets, setTickets] = React.useState<Ticket[]>([]);
+  const [stage, setStage] = React.useState<Stage>(Stage.EMAIL);
+  const [verificationCode, setVerificationCode] = React.useState("");
+  const [totpCode, setTotpCode] = React.useState("");
+  const [formLoading, setFormLoading] = React.useState(false);
+  const [totpError, setTotpError] = React.useState(false);
+  const [loadingWebauthn, setLoadingWebauthn] = React.useState(false);
+  const hasTotp = React.useMemo(() => {
+    return factors.findIndex((fa) => fa === "TOTP") !== -1;
+  }, [factors]);
+
   React.useEffect(() => {
+    if (tickets.length == 1) {
+      if (hasTotp) {
+        setStage(Stage.TOTP);
+      } else {
+        setStage(Stage.VERIFICATION_CODE);
+      }
+    }
     if (tickets.length == 2) {
       setTimeout(() => {
         accountApi
           .createSession({
             createSessionRequest: {
               email: email,
-              tickets: tickets,
+              tickets: tickets.map((ticket) => ticket.token),
             },
           })
           .then((token) => {
@@ -77,19 +100,19 @@ export default function SignIn() {
           });
       }, 250);
     }
-  }, [tickets]);
-  const [stage, setStage] = React.useState<Stage>(Stage.EMAIL);
-  const [verificationCode, setVerificationCode] = React.useState("");
-  const [totpCode, setTotpCode] = React.useState("");
+  }, [tickets, hasTotp]);
 
-  const [totpError, setTotpError] = React.useState(false);
-  const hasTotp = React.useMemo(() => {
-    return factors.findIndex((fa) => fa === "TOTP") !== -1;
-  }, [factors]);
+  React.useEffect(() => {
+    if (totpCode.length !== 6) return;
+    totpSignin();
+  }, [totpCode]);
+
   const getFactors = () => {
+    setFormLoading(true);
     if (!email) {
       setEmailError(true);
       messageApi.error("Email are required!");
+      setFormLoading(false);
       return;
     }
     accountApi
@@ -101,13 +124,17 @@ export default function SignIn() {
       .catch(() => {
         setEmailError(true);
         messageApi.error("Email not found!");
-      });
+      })
+      .finally(() => setFormLoading(false));
   };
+
   const verificationPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setFormLoading(true);
     if (!password) {
       setPasswordError(true);
       messageApi.error("Password are required!");
+      setFormLoading(false);
       return;
     }
     ticketApi
@@ -119,8 +146,16 @@ export default function SignIn() {
         },
       })
       .then((ticket) => {
-        setStage(Stage.VERIFICATION_CODE);
-        setTickets((tickets) => [...tickets, ticket.token]);
+        setTickets((tickets) => [...tickets, ticket]);
+      })
+      .catch((e: ResponseError) => {
+        const statusCode = e.response.status;
+        if (statusCode === 401) {
+          setPasswordError(true);
+        }
+      })
+      .finally(() => {
+        setFormLoading(false);
       });
   };
   const totpSignin = () => {
@@ -138,289 +173,252 @@ export default function SignIn() {
         },
       })
       .then((ticket) => {
-        setTickets((tickets) => [...tickets, ticket.token]);
+        setTickets((tickets) => [...tickets, ticket]);
       });
   };
-  React.useEffect(() => {
-    if (totpCode.length !== 6) return;
-    totpSignin();
-  }, [totpCode]);
-  return (
-    <Container
-      component="main"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        height: "100%",
-        paddingTop: 20,
-      }}>
-      {contextHolder}
-      <Paper
-        style={{
-          width: 400,
-          padding: 20,
+
+  const securityButton = () => {
+    return (
+      <Button
+        disabled={loadingWebauthn}
+        startIcon={<FingerprintIcon></FingerprintIcon>}
+        onClick={() => {
+          setLoadingWebauthn(true);
+          webauthnTicket(email)
+            .then((ticket: any) =>
+              setTickets((tickets) => [...tickets, ticket])
+            )
+            .finally(() => {
+              setLoadingWebauthn(false);
+            });
         }}>
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}>
-          <Grid container direction="column" alignItems="center" spacing={1}>
-            <Grid item>
-              <img height="40" src="/boardware.png" />
-            </Grid>
-            <Grid item>
-              <Typography
-                hidden={stage !== Stage.EMAIL}
-                component="h1"
-                variant="h5">
-                Sign in
-              </Typography>
-              <Typography
-                hidden={stage === Stage.EMAIL}
-                component="h1"
-                variant="h5">
-                Welcome
-              </Typography>
-            </Grid>
-            <Grid item>
-              {stage !== Stage.EMAIL && (
-                <Chip
-                  onDelete={() => {
-                    setStage(Stage.EMAIL);
-                    setPassword("");
-                  }}
-                  label={email}></Chip>
-              )}
-            </Grid>
-            <Grid item>
-              <Typography
-                hidden={stage !== Stage.EMAIL}
-                component="h2"
-                variant="subtitle1">
-                Use your Email
-              </Typography>
-            </Grid>
+        Use security key
+      </Button>
+    );
+  };
+
+  return (
+    <CenterForm loading={formLoading}>
+      {contextHolder}
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}>
+        <Grid container direction="column" alignItems="center" spacing={1}>
+          <Grid item>
+            <img height="40" src="/boardware.png" />
           </Grid>
-          {stage === Stage.EMAIL && (
-            <Box component="div" sx={{ mt: 1 }}>
-              <TextField
-                value={email}
-                error={emailError}
-                onChange={(e) => {
-                  setEmailError(false);
-                  setEmail(e.target.value);
+          <Grid item>
+            <Typography
+              hidden={stage !== Stage.EMAIL}
+              component="h1"
+              variant="h5">
+              Sign in
+            </Typography>
+            <Typography
+              hidden={stage === Stage.EMAIL}
+              component="h1"
+              variant="h5">
+              Welcome
+            </Typography>
+          </Grid>
+          <Grid item>
+            {stage !== Stage.EMAIL && (
+              <Chip
+                onDelete={() => {
+                  setStage(Stage.EMAIL);
+                  setTickets([]);
+                  setPassword("");
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") getFactors();
-                }}
-                margin="normal"
-                fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <Button
-                type="button"
-                fullWidth
-                variant="contained"
-                onClick={getFactors}
-                sx={{ mt: 3, mb: 2 }}>
-                Next
-              </Button>
-              <Grid container>
-                <Grid item xs={12}>
-                  <Link href="/forgotPassword" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item xs={12}>
-                  <Link href="/signup" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
+                label={email}></Chip>
+            )}
+          </Grid>
+          <Grid item>
+            <Typography
+              hidden={stage !== Stage.EMAIL}
+              component="h2"
+              variant="subtitle1">
+              Use your Email
+            </Typography>
+          </Grid>
+        </Grid>
+        {stage === Stage.EMAIL && (
+          <Box component="div" sx={{ mt: 1 }}>
+            <TextField
+              value={email}
+              error={emailError}
+              onChange={(e) => {
+                setEmailError(false);
+                setEmail(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") getFactors();
+              }}
+              fullWidth
+              id="email"
+              label="Email"
+              autoComplete="email"
+              autoFocus
+            />
+            <Button
+              type="button"
+              fullWidth
+              variant="contained"
+              onClick={getFactors}
+              sx={{ mt: 2, mb: 2 }}>
+              Next
+            </Button>
+            <Grid container>
+              <Grid item xs={12}>
+                <Link href="/forgotPassword" variant="body2">
+                  Forgot password?
+                </Link>
               </Grid>
-            </Box>
-          )}
+              <Grid item xs={12}>
+                <Link href="/signup" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
 
-          {stage === Stage.PASSWORD && (
-            <Box
-              component="form"
-              onSubmit={verificationPassword}
-              noValidate
-              sx={{ mt: 1 }}>
-              <TextField
-                error={passwordError}
-                onChange={(e) => {
-                  setPasswordError(false);
-                  setPassword(e.target.value);
-                }}
-                autoFocus
-                margin="normal"
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}>
-                Next
-              </Button>
-            </Box>
-          )}
-          {stage === Stage.VERIFICATION_CODE && (
-            <Box
-              component="div"
-              style={{ alignContent: "center" }}
-              sx={{ mt: 1 }}>
-              <Grid
-                container
-                direction="column"
-                alignItems="center"
-                spacing={1}>
-                <Grid item>
-                  <Typography component="h1" variant="h5">
-                    2FA - Email
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography component="h2" variant="subtitle1">
-                    To help keep your account safe, BoardWare wants to make sure
-                    it’s really you trying to sign in
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <VerificationCodeButton
-                    setCode={setVerificationCode}
-                    code={verificationCode}
-                    purpose={VerificationCodePurpose.Ticket}
-                    email={email}></VerificationCodeButton>
-                  <Button
-                    onClick={() => {
-                      ticketApi
-                        .createTicket({
-                          createTicketRequest: {
-                            email: email,
-                            type: TicketType.Email,
-                            verificationCode: verificationCode,
-                          },
-                        })
-                        .then((ticket) => {
-                          setTickets((tickets) => [...tickets, ticket.token]);
-                        });
-                    }}
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}>
-                    Sign In
-                  </Button>
-                </Grid>
-                {hasTotp && (
-                  <Grid item xs={12}>
-                    <Button onClick={() => setStage(Stage.TOTP)}>
-                      Use TOTP One-time password
-                    </Button>
-                  </Grid>
-                )}
-                {factors.filter((factor) => factor === "WEBAUTHN").length !==
-                  0 && (
-                  <Grid item>
-                    <Button
-                      onClick={() =>
-                        webauthnTicket(email).then((ticket: any) =>
-                          setTickets((tickets) => [
-                            ...tickets,
-                            ticket.token as string,
-                          ])
-                        )
-                      }>
-                      Use security key
-                    </Button>
-                  </Grid>
-                )}
+        {stage === Stage.PASSWORD && (
+          <Box component="form" onSubmit={verificationPassword} noValidate>
+            <TextField
+              error={passwordError}
+              onChange={(e) => {
+                setPasswordError(false);
+                setPassword(e.target.value);
+              }}
+              autoFocus
+              margin="normal"
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 2, mb: 2 }}>
+              Next
+            </Button>
+          </Box>
+        )}
+        {stage === Stage.VERIFICATION_CODE && (
+          <Box component="div" style={{ maxWidth: 400 }} sx={{ mt: 1 }}>
+            <Grid container direction="column" alignItems="center" spacing={1}>
+              <Grid item>
+                <Typography component="h1" variant="h5">
+                  2FA - Email
+                </Typography>
               </Grid>
-            </Box>
-          )}
-          {stage === Stage.TOTP && (
-            <Box
-              component="div"
-              style={{ alignContent: "center" }}
-              sx={{ mt: 1 }}>
-              <Grid
-                container
-                direction="column"
-                alignItems="center"
-                spacing={1}>
-                <Grid item>
-                  <Typography component="h1" variant="h5">
-                    2FA - TOTP
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    value={totpCode}
-                    error={totpError}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        totpSignin();
-                      }
-                    }}
-                    onChange={(e) => {
-                      setTotpError(false);
-                      setTotpCode(e.target.value);
-                    }}
-                    autoFocus
-                    margin="normal"
-                    label="One-time password"
-                    fullWidth
-                    autoComplete="current-password"
-                  />
-                  <Button
-                    onClick={totpSignin}
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}>
-                    Sign In
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button onClick={() => setStage(Stage.VERIFICATION_CODE)}>
-                    Use Email Verification code
-                  </Button>
-                </Grid>
-                {factors.filter((factor) => factor === "WEBAUTHN").length !==
-                  0 && (
-                  <Grid item>
-                    <Button
-                      onClick={() =>
-                        webauthnTicket(email).then((ticket: any) =>
-                          setTickets((tickets) => [
-                            ...tickets,
-                            ticket.token as string,
-                          ])
-                        )
-                      }>
-                      Use security key
-                    </Button>
-                  </Grid>
-                )}
+              <Grid item xs={12}>
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  To help keep your account safe, BoardWare wants to make sure
+                  it’s really you trying to sign in
+                </Alert>
+                <VerificationCodeButton
+                  setCode={setVerificationCode}
+                  code={verificationCode}
+                  onFrequent={() => alert("Please try again in 60 seconds!")}
+                  purpose={VerificationCodePurpose.Ticket}
+                  email={email}></VerificationCodeButton>
+                <Button
+                  onClick={() => {
+                    ticketApi
+                      .createTicket({
+                        createTicketRequest: {
+                          email: email,
+                          type: TicketType.Email,
+                          verificationCode: verificationCode,
+                        },
+                      })
+                      .then((ticket) => {
+                        setTickets((tickets) => [...tickets, ticket]);
+                      });
+                  }}
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}>
+                  Sign In
+                </Button>
               </Grid>
-            </Box>
-          )}
-        </Box>
+              {hasTotp && (
+                <Grid item>
+                  <Button
+                    startIcon={<SmartphoneIcon></SmartphoneIcon>}
+                    onClick={() => setStage(Stage.TOTP)}>
+                    Use TOTP One-time password
+                  </Button>
+                </Grid>
+              )}
+              {factors.filter((factor) => factor === "WEBAUTHN").length !==
+                0 && <Grid item>{securityButton()}</Grid>}
+            </Grid>
+          </Box>
+        )}
+        {stage === Stage.TOTP && (
+          <Box
+            component="div"
+            style={{ alignContent: "center" }}
+            sx={{ mt: 1 }}>
+            <Grid container direction="column" alignItems="center" spacing={1}>
+              <Grid item>
+                <Typography component="h1" variant="h5">
+                  2FA - TOTP
+                </Typography>
+              </Grid>
+              <Grid item>
+                <TextField
+                  value={totpCode}
+                  error={totpError}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      totpSignin();
+                    }
+                  }}
+                  onChange={(e) => {
+                    setTotpError(false);
+                    setTotpCode(e.target.value);
+                  }}
+                  autoFocus
+                  margin="normal"
+                  label="One-time password"
+                  fullWidth
+                  autoComplete="current-password"
+                />
+                <Button
+                  onClick={totpSignin}
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}>
+                  Sign In
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  startIcon={<EmailIcon></EmailIcon>}
+                  onClick={() => setStage(Stage.VERIFICATION_CODE)}>
+                  Use Email Verification code
+                </Button>
+              </Grid>
+              {factors.filter((factor) => factor === "WEBAUTHN").length !==
+                0 && <Grid item>{securityButton()}</Grid>}
+            </Grid>
+          </Box>
+        )}
+      </Box>
 
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Paper>
-    </Container>
+      <Copyright sx={{ mt: 8, mb: 4 }} />
+    </CenterForm>
   );
 }

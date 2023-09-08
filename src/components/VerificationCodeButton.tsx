@@ -15,19 +15,21 @@ interface IProps {
   code: string;
   setCode: React.Dispatch<React.SetStateAction<string>>;
   email: string;
-  autoSend?: boolean;
   purpose?: VerificationCodePurpose;
+  onFrequent?: () => void;
 }
 
 const VerificationCodeButton: React.FC<IProps> = ({
   email,
-  autoSend,
   purpose,
   code,
   setCode,
+  onFrequent,
 }) => {
   const [reciprocal, setReciprocal] = useState(0);
+  const [loading, setLoading] = useState(false);
   const sendVerificationCode = () => {
+    setLoading(true);
     verificationApi
       .createVerificationCode({
         createVerificationCodeRequest: {
@@ -46,7 +48,11 @@ const VerificationCodeButton: React.FC<IProps> = ({
         }, 1000);
       })
       .catch((e: ResponseError) => {
+        if (onFrequent) onFrequent();
         e.response.json().then((err) => {});
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   return (
@@ -63,7 +69,7 @@ const VerificationCodeButton: React.FC<IProps> = ({
           <InputAdornment position="end">
             <Button
               onClick={sendVerificationCode}
-              disabled={reciprocal !== 0}
+              disabled={reciprocal !== 0 || loading}
               variant="contained">
               {reciprocal === 0 ? "Verify" : reciprocal + "s"}
             </Button>
