@@ -8,8 +8,8 @@ import {
 
 export const token = localStorage.getItem("token");
 
-// export let basePath = "https://core-uat.k8s19932be1.boardware.com";
-export let basePath = "http://localhost:8080";
+export let basePath = "https://core-uat.k8s19932be1.boardware.com";
+// export let basePath = "http://localhost:8080";
 
 const accountApi = new AccountApi(
   new Configuration({
