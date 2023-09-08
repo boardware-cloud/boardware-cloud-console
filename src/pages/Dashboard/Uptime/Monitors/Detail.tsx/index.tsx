@@ -59,7 +59,6 @@ const MonitorDetail: React.FC = () => {
       .then((r) => {
         if (!r) return;
         setRecords(r.data!);
-        setRecords(r.data!);
       })
       .catch((e) => console.log(e));
   };
