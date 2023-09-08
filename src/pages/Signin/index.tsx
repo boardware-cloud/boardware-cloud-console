@@ -64,8 +64,8 @@ export default function SignIn() {
               tickets: tickets,
             },
           })
-          .then((e) => {
-            localStorage.setItem("token", e.token!);
+          .then((token) => {
+            localStorage.setItem("token", token.secret);
             setTimeout(() => {
               window.location.href = "/dashboard/uptime";
             }, 250);
@@ -129,26 +129,16 @@ export default function SignIn() {
       messageApi.error("One-time password are required!");
       return;
     }
-    accountApi
-      .createSession({
-        createSessionRequest: { email, password: sha256(password), totpCode },
+    ticketApi
+      .createTicket({
+        createTicketRequest: {
+          email: email,
+          type: TicketType.Totp,
+          totpCode: totpCode,
+        },
       })
-      .then((session) => {
-        if (session.status === "TWO_FA") {
-          setTotpError(true);
-          messageApi.error(
-            "Wrong one-time password. Try again or click Forgot password to reset it."
-          );
-          return;
-        }
-        localStorage.setItem("token", session.token);
-        window.location.href = "/dashboard/uptime";
-      })
-      .catch(() => {
-        setTotpError(true);
-        messageApi.error(
-          "Wrong one-time password. Try again or click Forgot password to reset it."
-        );
+      .then((ticket) => {
+        setTickets((tickets) => [...tickets, ticket.token]);
       });
   };
   React.useEffect(() => {
