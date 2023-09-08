@@ -33,14 +33,20 @@ export function webauthnTicket(email: string) {
           },
         };
 
-        return fetch(`${basePath}/account/webauthn/sessions/tickets/` + id, {
+        fetch(`${basePath}/account/webauthn/sessions/tickets/` + id, {
           method: "POST",
           body: JSON.stringify(authenticatorAssertionResponse),
-        });
+        })
+          .then((e) => e.json())
+          .then((json) => {
+            resolve(json);
+          })
+          .catch((e) => {
+            reject(e);
+          });
       })
-      .then((e) => e.json())
-      .then((json) => {
-        resolve(json);
+      .catch((e) => {
+        reject(e);
       });
   });
 }

@@ -23,13 +23,13 @@ import {
   IconButton,
 } from "@mui/material";
 import Heartbeat from "./Heartbeat";
-import Statistic from "./Statistic";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EditIcon from "@mui/icons-material/Edit";
 import PauseIcon from "@mui/icons-material/Pause";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import Breadcrumbs from "../../../../../components/Breadcrumbs";
+import InsertLinkIcon from "@mui/icons-material/InsertLink";
+import SpellcheckIcon from "@mui/icons-material/Spellcheck";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -46,6 +46,13 @@ const MonitorDetail: React.FC = () => {
   const [records, setRecords] = React.useState<MonitoringRecord[]>([]);
   const [showCopyed, setShowCopyed] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  useEffect(() => {
+    if (showCopyed) {
+      setTimeout(() => {
+        setShowCopyed(false);
+      }, 3000);
+    }
+  }, [showCopyed]);
   const getRecords = (id: string) => {
     monitorApi
       .listMonitoringRecords({ id, limit: 30, index: 0 })
@@ -128,6 +135,8 @@ const MonitorDetail: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <Button
+                  endIcon={showCopyed && <SpellcheckIcon></SpellcheckIcon>}
+                  startIcon={<InsertLinkIcon></InsertLinkIcon>}
                   onClick={() => {
                     setShowCopyed(true);
                     navigator.clipboard.writeText(monitor.url);

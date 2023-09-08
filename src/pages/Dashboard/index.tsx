@@ -85,14 +85,9 @@ export default function Dashboard() {
   };
   const navigate = useNavigate();
   React.useEffect(() => {
-    accountApi
-      .getAccount()
-      .then(() => {
-        navigate("/dashboard");
-      })
-      .catch(() => {
-        navigate("/signin");
-      });
+    accountApi.getAccount().catch(() => {
+      navigate("/signin");
+    });
   }, []);
   return (
     <Box sx={{ display: "flex" }}>
