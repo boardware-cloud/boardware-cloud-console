@@ -23,6 +23,7 @@ import { sha256 } from "../../utils/account";
 import { ResponseError } from "@boardware/argus-ts-sdk";
 import CenterForm from "../../components/CenterForm";
 import { passwordHelpText, validatePassword } from "../../utils/password";
+import Copyright from "../../components/Copyright";
 
 const Signup: React.FC = () => {
   const nav = useNavigate();
@@ -101,16 +102,14 @@ const Signup: React.FC = () => {
           flexDirection: "column",
           alignItems: "center",
         }}>
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <AccountBoxIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
+        <img height="40" src="/boardware.png" />
+        <Typography sx={{ mt: 2, mb: 2 }} component="h1" variant="h5">
           Sign up
         </Typography>
         <FormControl
           error={emailError !== ""}
           fullWidth
-          sx={{ m: 1 }}
+          sx={{ mt: 2, m: 1 }}
           variant="filled">
           <InputLabel htmlFor="filled-adornment-password">Email</InputLabel>
           <FilledInput
@@ -199,6 +198,7 @@ const Signup: React.FC = () => {
             </Link>
           </Grid>
         </Grid>
+        <Copyright sx={{ mt: 4, mb: 4 }} />
       </Box>
     </CenterForm>
   );

@@ -12,26 +12,35 @@ import {
   IconButton,
   Grid,
   Link,
+  FormHelperText,
 } from "@mui/material";
 import { VerificationCodePurpose } from "@boardware/core-ts-sdk";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import accountApi, { verificationApi } from "../../api/core";
 import Copyright from "../../components/Copyright";
-import LockResetIcon from "@mui/icons-material/LockReset";
 import { sha256 } from "../../utils/account";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { ResponseError } from "@boardware/argus-ts-sdk";
+import CenterForm from "../../components/CenterForm";
+import { passwordHelpText, validatePassword } from "../../utils/password";
 
 const ForgotPassword: React.FC = () => {
   const nav = useNavigate();
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [reciprocal, setReciprocal] = useState(0);
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const [messageApi, contextHolder] = message.useMessage();
+  useEffect(() => {
+    if (validatePassword(password)) {
+      setPasswordError("");
+    }
+  }, [password]);
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -46,6 +55,7 @@ const ForgotPassword: React.FC = () => {
         },
       })
       .then(() => {
+        setEmailError("");
         let r = 60;
         setReciprocal(r);
         const interval = setInterval(() => {
@@ -58,11 +68,15 @@ const ForgotPassword: React.FC = () => {
       })
       .catch((e: ResponseError) => {
         e.response.json().then((err) => {
-          messageApi.error(err.message);
+          setEmailError(err.message);
         });
       });
   }, [email]);
   const resetPasswordRequest = () => {
+    if (!validatePassword(password)) {
+      setPasswordError(passwordHelpText);
+      return;
+    }
     accountApi
       .updatePassword({
         updatePasswordRequest: {
@@ -80,29 +94,38 @@ const ForgotPassword: React.FC = () => {
       });
   };
   return (
-    <Container component="main" maxWidth="xs">
+    <CenterForm>
       {contextHolder}
       <Box
         sx={{
+          width: 350,
           marginTop: 8,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
         }}>
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockResetIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
+        <img height="40" src="/boardware.png" />
+        <Typography sx={{ mt: 2, mb: 2 }} component="h1" variant="h5">
           Forgot password
         </Typography>
-        <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+        <FormControl
+          error={emailError !== ""}
+          fullWidth
+          sx={{ m: 1 }}
+          variant="filled">
           <InputLabel htmlFor="filled-adornment-password">Email</InputLabel>
           <FilledInput
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                sendVerificationCode();
+              }
+            }}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             id="filled-adornment-password"
             type="email"
           />
+          {emailError !== "" && <FormHelperText>{emailError}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{ m: 1 }} variant="filled">
           <InputLabel htmlFor="filled-adornment-password">
@@ -128,11 +151,20 @@ const ForgotPassword: React.FC = () => {
             }
           />
         </FormControl>
-        <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+        <FormControl
+          error={passwordError !== ""}
+          fullWidth
+          sx={{ m: 1 }}
+          variant="filled">
           <InputLabel htmlFor="filled-adornment-password">
             New Password
           </InputLabel>
           <FilledInput
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                resetPasswordRequest();
+              }
+            }}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             id="filled-adornment-password"
@@ -149,6 +181,9 @@ const ForgotPassword: React.FC = () => {
               </InputAdornment>
             }
           />
+          {passwordError !== "" && (
+            <FormHelperText>{passwordError}</FormHelperText>
+          )}
         </FormControl>
         <Button
           type="submit"
@@ -166,8 +201,8 @@ const ForgotPassword: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
-    </Container>
+      <Copyright sx={{ mt: 4, mb: 4 }} />
+    </CenterForm>
   );
 };
 
