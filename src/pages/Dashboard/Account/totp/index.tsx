@@ -7,6 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  Link,
   Paper,
   TextField,
   Typography,
@@ -20,6 +21,7 @@ import accountApi from "../../../../api/core";
 import { Account } from "@boardware/core-ts-sdk";
 import { QRCode } from "antd";
 import { useNavigate } from "react-router-dom";
+import CopyButton from "../../../../components/CopyButton";
 
 const Finish: React.FC = () => {
   const nav = useNavigate();
@@ -83,9 +85,7 @@ const SaveSecret: React.FC<{
           Your two-factor secret
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            <Button onClick={handleClick}>{secret}</Button>
-          </DialogContentText>
+          <CopyButton text={secret}></CopyButton>
         </DialogContent>
       </Dialog>
       <Grid container spacing={1}>
@@ -97,21 +97,21 @@ const SaveSecret: React.FC<{
         <Grid item>
           <Typography variant="subtitle1">
             Authenticator apps and browser extensions like{" "}
-            <a
+            <Link
               target="_blank"
               href="https://support.1password.com/one-time-passwords/">
               1Password
-            </a>
+            </Link>
             ,{" "}
-            <a target="_blank" href="https://authy.com/guides/github/">
+            <Link target="_blank" href="https://authy.com/guides/github/">
               Authy
-            </a>
+            </Link>
             ,{" "}
-            <a
+            <Link
               target="_blank"
               href="https://www.microsoft.com/en-us/security/mobile-authenticator-app">
               Microsoft Authenticator
-            </a>
+            </Link>
             , etc. generate one-time passwords that are used as a second factor
             to verify your identity when prompted during sign-in.
           </Typography>
@@ -124,11 +124,11 @@ const SaveSecret: React.FC<{
         <Grid item>
           <Typography variant="subtitle1">
             Use an authenticator app or browser extension to scan.{" "}
-            <a
+            <Link
               target="_blank"
               href="https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication">
               Learn more about enabling 2FA.
-            </a>
+            </Link>
           </Typography>
         </Grid>
         <Grid item xs={12}>

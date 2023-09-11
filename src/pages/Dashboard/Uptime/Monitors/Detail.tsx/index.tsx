@@ -29,6 +29,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import SpellcheckIcon from "@mui/icons-material/Spellcheck";
+import CopyButton from "../../../../../components/CopyButton";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -132,17 +133,9 @@ const MonitorDetail: React.FC = () => {
                 <h2>{monitor.name}</h2>
               </Grid>
               <Grid item xs={12}>
-                <Button
-                  endIcon={showCopyed && <SpellcheckIcon></SpellcheckIcon>}
-                  startIcon={<InsertLinkIcon></InsertLinkIcon>}
-                  onClick={() => {
-                    setShowCopyed(true);
-                    navigator.clipboard.writeText(monitor.url);
-                  }}
-                  style={{ textTransform: "none" }}
-                  variant="text">
-                  {monitor.url}
-                </Button>
+                <CopyButton
+                  text={monitor.url}
+                  startIcon={<InsertLinkIcon></InsertLinkIcon>}></CopyButton>
               </Grid>
 
               <Grid item xs={12}>

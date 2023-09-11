@@ -16,6 +16,7 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
+  Link,
 } from "@mui/material";
 import { Account, WebAuthn } from "@boardware/core-ts-sdk";
 import React, { useEffect, useMemo, useState } from "react";
@@ -31,6 +32,7 @@ import AppSettingsAltIcon from "@mui/icons-material/AppSettingsAlt";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SectionTitle from "../../../../components/SectionTitle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const TwoFactor: React.FC = () => {
   const nav = useNavigate();
@@ -132,11 +134,12 @@ const TwoFactor: React.FC = () => {
       <Grid item>
         Two-factor authentication adds an additional layer of security to your
         account by requiring more than just a password to sign in.{" "}
-        <a
+        <Link
           target="_blank"
-          href="https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/about-two-factor-authentication">
+          href="https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/about-two-factor-authentication"
+          underline="hover">
           Learn more about two-factor authentication.
-        </a>
+        </Link>
       </Grid>
       <Grid item>
         <List
@@ -202,6 +205,7 @@ const TwoFactor: React.FC = () => {
                     <FingerprintIcon />
                   </ListItemIcon>
                   <Button
+                    startIcon={<AddCircleIcon></AddCircleIcon>}
                     onClick={() => setShowAddWebAuthn(true)}
                     variant="contained">
                     Register new security key
