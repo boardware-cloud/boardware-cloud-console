@@ -132,7 +132,22 @@ export default function SignIn() {
       })
       .finally(() => setFormLoading(false));
   };
-
+  const getVerificationCodeTicket = () => {
+    ticketApi
+      .createTicket({
+        createTicketRequest: {
+          email: email,
+          type: TicketType.Email,
+          verificationCode: verificationCode,
+        },
+      })
+      .then((ticket) => {
+        setTickets((tickets) => [...tickets, ticket]);
+      })
+      .catch(() => {
+        alert("Verification error");
+      });
+  };
   const verificationPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (formLoading) return;
@@ -182,6 +197,9 @@ export default function SignIn() {
       })
       .then((ticket) => {
         setTickets((tickets) => [...tickets, ticket]);
+      })
+      .catch(() => {
+        setTotpError(true);
       })
       .finally(() => {
         setFormLoading(false);
@@ -341,25 +359,15 @@ export default function SignIn() {
                   it’s really you trying to sign in
                 </Alert>
                 <VerificationCodeButton
+                  autoSubmitAt={6}
+                  onEnter={getVerificationCodeTicket}
                   setCode={setVerificationCode}
                   code={verificationCode}
                   onFrequent={() => alert("Please try again in 60 seconds!")}
                   purpose={VerificationCodePurpose.Ticket}
                   email={email}></VerificationCodeButton>
                 <Button
-                  onClick={() => {
-                    ticketApi
-                      .createTicket({
-                        createTicketRequest: {
-                          email: email,
-                          type: TicketType.Email,
-                          verificationCode: verificationCode,
-                        },
-                      })
-                      .then((ticket) => {
-                        setTickets((tickets) => [...tickets, ticket]);
-                      });
-                  }}
+                  onClick={getVerificationCodeTicket}
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}>

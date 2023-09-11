@@ -7,27 +7,36 @@ import {
   IconButton,
   Button,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { verificationApi } from "../api/core";
 import { ResponseError, VerificationCodePurpose } from "@boardware/core-ts-sdk";
 
 interface IProps {
+  onEnter?: () => void;
   code: string;
   setCode: React.Dispatch<React.SetStateAction<string>>;
   email: string;
   purpose?: VerificationCodePurpose;
   onFrequent?: () => void;
+  autoSubmitAt?: number;
 }
 
 const VerificationCodeButton: React.FC<IProps> = ({
+  onEnter,
   email,
   purpose,
   code,
   setCode,
   onFrequent,
+  autoSubmitAt,
 }) => {
   const [reciprocal, setReciprocal] = useState(0);
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (code.length === autoSubmitAt && onEnter) {
+      onEnter();
+    }
+  }, [code]);
   const sendVerificationCode = () => {
     setLoading(true);
     verificationApi
@@ -61,6 +70,9 @@ const VerificationCodeButton: React.FC<IProps> = ({
         Verification code
       </InputLabel>
       <FilledInput
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && onEnter) onEnter();
+        }}
         fullWidth
         value={code}
         onChange={(e) => setCode(e.target.value)}
