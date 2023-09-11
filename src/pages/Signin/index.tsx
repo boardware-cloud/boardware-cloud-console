@@ -66,6 +66,9 @@ export default function SignIn() {
   const [formLoading, setFormLoading] = React.useState(false);
   const [totpError, setTotpError] = React.useState(false);
   const [loadingWebauthn, setLoadingWebauthn] = React.useState(false);
+  React.useEffect(() => {
+    setFormLoading(loadingWebauthn);
+  }, [loadingWebauthn]);
   const hasTotp = React.useMemo(() => {
     return factors.findIndex((fa) => fa === "TOTP") !== -1;
   }, [factors]);
@@ -79,6 +82,7 @@ export default function SignIn() {
       }
     }
     if (tickets.length == 2) {
+      setFormLoading(true);
       setTimeout(() => {
         accountApi
           .createSession({
@@ -108,6 +112,7 @@ export default function SignIn() {
   }, [totpCode]);
 
   const getFactors = () => {
+    if (formLoading) return;
     setFormLoading(true);
     if (!email) {
       setEmailError(true);
@@ -130,6 +135,7 @@ export default function SignIn() {
 
   const verificationPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (formLoading) return;
     setFormLoading(true);
     if (!password) {
       setPasswordError(true);
@@ -159,11 +165,13 @@ export default function SignIn() {
       });
   };
   const totpSignin = () => {
+    if (formLoading) return;
     if (!totpCode) {
       setTotpError(true);
       messageApi.error("One-time password are required!");
       return;
     }
+    setFormLoading(true);
     ticketApi
       .createTicket({
         createTicketRequest: {
@@ -174,6 +182,9 @@ export default function SignIn() {
       })
       .then((ticket) => {
         setTickets((tickets) => [...tickets, ticket]);
+      })
+      .finally(() => {
+        setFormLoading(false);
       });
   };
 
