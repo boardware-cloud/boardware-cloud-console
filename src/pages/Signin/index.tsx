@@ -102,7 +102,7 @@ export default function SignIn() {
               messageApi.error(j.message);
             });
           });
-      }, 250);
+      }, 1000);
     }
   }, [tickets, hasTotp]);
 
