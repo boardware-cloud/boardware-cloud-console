@@ -1,8 +1,4 @@
-import {
-  CheckCircleOutlined,
-  ExpandLess,
-  ExpandMore,
-} from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Button,
   Collapse,
@@ -19,8 +15,6 @@ import {
   ListSubheader,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
 } from "@mui/material";
 import { Account, WebAuthn } from "@boardware/core-ts-sdk";

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import accountApi from "../../../api/core";
 import { Role } from "@boardware/core-ts-sdk";
 import { useNavigate } from "react-router-dom";
-import { Button, Paper } from "@mui/material";
+import { Paper } from "@mui/material";
 import Accounts from "./Accounts";
 
 const Admin: React.FC = () => {

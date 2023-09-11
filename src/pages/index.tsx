@@ -1,6 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import accountApi from "../api/core";
+import { Outlet } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material";
 
 const defaultTheme = createTheme();

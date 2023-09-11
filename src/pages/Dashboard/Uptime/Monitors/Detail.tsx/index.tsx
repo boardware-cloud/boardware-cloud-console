@@ -19,7 +19,6 @@ import {
   DialogTitle,
   Typography,
   styled,
-  Stack,
   IconButton,
 } from "@mui/material";
 import Heartbeat from "./Heartbeat";

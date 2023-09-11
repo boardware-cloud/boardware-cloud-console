@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { MonitoringRecord, MonitoringResult } from "@boardware/argus-ts-sdk";
 import ReactEcharts from "echarts-for-react";
-import { Chip, FormControlLabel } from "@mui/material";
 
 interface IProps {
   records: MonitoringRecord[];

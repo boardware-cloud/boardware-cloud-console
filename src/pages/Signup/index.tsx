@@ -2,15 +2,14 @@ import {
   Avatar,
   Box,
   Button,
-  Container,
   FilledInput,
   FormControl,
+  FormHelperText,
   Grid,
   IconButton,
   InputAdornment,
   InputLabel,
   Link,
-  Paper,
   Typography,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
@@ -23,12 +22,15 @@ import { useNavigate } from "react-router-dom";
 import { sha256 } from "../../utils/account";
 import { ResponseError } from "@boardware/argus-ts-sdk";
 import CenterForm from "../../components/CenterForm";
+import { passwordHelpText, validatePassword } from "../../utils/password";
 
 const Signup: React.FC = () => {
   const nav = useNavigate();
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [reciprocal, setReciprocal] = useState(0);
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -39,6 +41,11 @@ const Signup: React.FC = () => {
     event.preventDefault();
   };
   const sendVerificationCode = useCallback(() => {
+    if (reciprocal !== 0) return;
+    if (email === "") {
+      setEmailError("Email are required");
+      return;
+    }
     verificationApi
       .createVerificationCode({
         createVerificationCodeRequest: {
@@ -47,6 +54,7 @@ const Signup: React.FC = () => {
         },
       })
       .then(() => {
+        setEmailError("");
         let r = 60;
         setReciprocal(r);
         const interval = setInterval(() => {
@@ -58,11 +66,15 @@ const Signup: React.FC = () => {
       })
       .catch((e: ResponseError) => {
         e.response.json().then((err) => {
-          messageApi.error(err.message);
+          setEmailError(err.message);
         });
       });
   }, [email]);
   const signupRequest = () => {
+    if (!validatePassword(password)) {
+      setPasswordError(true);
+      return;
+    }
     accountApi
       .createAccount({
         createAccountRequest: {
@@ -83,6 +95,7 @@ const Signup: React.FC = () => {
     <CenterForm>
       <Box
         sx={{
+          width: 350,
           marginTop: 8,
           display: "flex",
           flexDirection: "column",
@@ -94,14 +107,24 @@ const Signup: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+        <FormControl
+          error={emailError !== ""}
+          fullWidth
+          sx={{ m: 1 }}
+          variant="filled">
           <InputLabel htmlFor="filled-adornment-password">Email</InputLabel>
           <FilledInput
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendVerificationCode();
+              }
+            }}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             id="filled-adornment-password"
             type="email"
           />
+          {emailError && <FormHelperText>{emailError}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{ m: 1 }} variant="filled">
           <InputLabel htmlFor="filled-adornment-password">
@@ -127,11 +150,24 @@ const Signup: React.FC = () => {
             }
           />
         </FormControl>
-        <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+        <FormControl
+          error={passwordError}
+          fullWidth
+          sx={{ m: 1 }}
+          variant="filled">
           <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
           <FilledInput
+            error={passwordError}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                signupRequest();
+              }
+            }}
+            onChange={(e) => {
+              if (validatePassword(e.target.value)) setPasswordError(false);
+              setPassword(e.target.value);
+            }}
             id="filled-adornment-password"
             type={showPassword ? "text" : "password"}
             endAdornment={
@@ -146,6 +182,7 @@ const Signup: React.FC = () => {
               </InputAdornment>
             }
           />
+          {passwordError && <FormHelperText>{passwordHelpText}</FormHelperText>}
         </FormControl>
         <Button
           onClick={signupRequest}
