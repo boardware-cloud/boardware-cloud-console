@@ -7,6 +7,8 @@ import { Tag } from "antd";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import CopyButton from "../../../../components/CopyButton";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function RoleTag(role: Role) {
   switch (role) {
@@ -39,7 +41,14 @@ const Accounts: React.FC = () => {
       { title: "Email", key: "email" },
       { title: "Role", key: "role" },
       {
-        title: "Detail",
+        title: (
+          <Button
+            onClick={() => {
+              nav("/dashboard/admin/users/create");
+            }}>
+            <PersonAddIcon />
+          </Button>
+        ),
         key: "detail",
         align: "right",
         size: "small",
@@ -50,7 +59,7 @@ const Accounts: React.FC = () => {
   const rows = useMemo(() => {
     return accounts.map((account) => {
       return new Map<string, React.ReactNode>([
-        ["email", account.email],
+        ["email", <CopyButton text={account.email} />],
         ["role", RoleTag(account.role)],
         [
           "detail",

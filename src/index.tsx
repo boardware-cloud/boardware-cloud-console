@@ -20,6 +20,8 @@ import Totp from "./pages/Dashboard/Account/totp";
 import Security from "./pages/Dashboard/Account/Security";
 import Admin from "./pages/Dashboard/Admin";
 import Detail from "./pages/Dashboard/Admin/Accounts/Detail";
+import CreateAccount from "./pages/Dashboard/Admin/Accounts/Create";
+import accountApi from "./api/core";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -61,7 +63,11 @@ const router = createBrowserRouter([
           { path: "account/security", element: <Security /> },
           { path: "account/security/totp", element: <Totp /> },
           { path: "admin/users", element: <Admin /> },
-          { path: "admin/users/:id", element: <Detail /> },
+          {
+            path: "admin/users/:id",
+            element: <Detail />,
+          },
+          { path: "admin/users/create", element: <CreateAccount /> },
         ],
       },
       {

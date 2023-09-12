@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import { TablePagination } from "@mui/material";
 
 export interface ColumnsIProps {
-  title: React.ReactNode;
+  title?: React.ReactNode;
   key: string;
   align?: "inherit" | "left" | "center" | "right" | "justify";
   size?: "small" | "medium";
