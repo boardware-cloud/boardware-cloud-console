@@ -3,14 +3,14 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
+import { Role } from "@boardware/core-ts-sdk";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
-interface IProps {
+import GroupIcon from "@mui/icons-material/Group";
+const RouteButton: React.FC<{
   icon: JSX.Element;
   title: string;
   path?: string;
-}
-
-const RouteButton: React.FC<IProps> = ({ icon, title, path }) => {
+}> = ({ icon, title, path }) => {
   const navigate = useNavigate();
   return (
     <ListItemButton
@@ -25,38 +25,25 @@ const RouteButton: React.FC<IProps> = ({ icon, title, path }) => {
   );
 };
 
-export const mainListItems = (
-  <React.Fragment>
-    <RouteButton
-      icon={<MonitorHeartIcon />}
-      path={"/dashboard/uptime"}
-      title={"Uptime"}
-    />
-  </React.Fragment>
-);
+interface IProps {
+  role: Role;
+}
 
-export const secondaryListItems = (
-  <React.Fragment>
-    {/* <ListSubheader component="div" inset>
-      Saved reports
-    </ListSubheader>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItemButton> */}
-  </React.Fragment>
-);
+export function mainListItems(props: IProps) {
+  return (
+    <React.Fragment>
+      {props.role === Role.Root && (
+        <RouteButton
+          icon={<GroupIcon />}
+          path={"/dashboard/admin/users"}
+          title={"Users"}
+        />
+      )}
+      <RouteButton
+        icon={<MonitorHeartIcon />}
+        path={"/dashboard/uptime"}
+        title={"Uptime"}
+      />
+    </React.Fragment>
+  );
+}

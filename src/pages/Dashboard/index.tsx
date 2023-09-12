@@ -12,7 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Container from "@mui/material/Container";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "./listItems";
+import { mainListItems } from "./listItems";
 import { Outlet, useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { ListItemIcon, Menu, MenuItem } from "@mui/material";
@@ -20,6 +20,7 @@ import { logout } from "../../utils/account";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddModeratorIcon from "@mui/icons-material/AddModerator";
 import accountApi from "../../api/core";
+import { Account, Role } from "@boardware/core-ts-sdk";
 
 const drawerWidth: number = 200;
 
@@ -83,12 +84,24 @@ export default function Dashboard() {
     logout();
     nav("/signin");
   };
+  const [account, setAccount] = React.useState<Account>();
   const navigate = useNavigate();
   React.useEffect(() => {
-    accountApi.getAccount().catch(() => {
-      navigate("/signin");
-    });
+    accountApi
+      .getAccount()
+      .then((account) => {
+        setAccount(account);
+      })
+      .catch(() => {
+        navigate("/signin");
+      });
   }, []);
+
+  const role = React.useMemo(() => {
+    if (!account) return Role.User;
+    if (account.role !== Role.Root) return Role.User;
+    return Role.Root;
+  }, [account]);
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -171,9 +184,8 @@ export default function Dashboard() {
         </Toolbar>
         <Divider />
         <List component="nav">
-          {mainListItems}
+          {mainListItems({ role })}
           <Divider sx={{ my: 1 }} />
-          {secondaryListItems}
         </List>
       </Drawer>
       <Box

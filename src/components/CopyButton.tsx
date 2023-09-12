@@ -24,7 +24,9 @@ const CopyButton: React.FC<IProps> = ({ text, startIcon }) => {
         setShowCopyed(true);
         navigator.clipboard.writeText(text);
       }}
-      style={{}}
+      style={{
+        textTransform: "none",
+      }}
       variant="text">
       {text}
     </Button>

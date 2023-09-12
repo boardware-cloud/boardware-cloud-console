@@ -18,7 +18,6 @@ import {
   DialogContentText,
   DialogTitle,
   Typography,
-  styled,
   IconButton,
 } from "@mui/material";
 import Heartbeat from "./Heartbeat";
@@ -28,16 +27,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import PauseIcon from "@mui/icons-material/Pause";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
-import SpellcheckIcon from "@mui/icons-material/Spellcheck";
 import CopyButton from "../../../../../components/CopyButton";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 const MonitorDetail: React.FC = () => {
   let { id } = useParams();

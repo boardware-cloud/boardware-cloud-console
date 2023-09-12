@@ -9,18 +9,12 @@ const Admin: React.FC = () => {
   const nav = useNavigate();
   useEffect(() => {
     accountApi.getAccount().then((account) => {
-      console.log(account);
       if (account.role !== Role.Root) {
         nav("/dashboard");
       }
     });
   });
-  return (
-    <Paper style={{ padding: 20 }}>
-      {/* <Button variant="contained"></Button> */}
-      <Accounts></Accounts>
-    </Paper>
-  );
+  return <Accounts></Accounts>;
 };
 
 export default Admin;
