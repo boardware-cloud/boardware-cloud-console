@@ -1,13 +1,25 @@
 import { Account } from "@boardware/core-ts-sdk";
-import { Paper } from "@mui/material";
+import { Grid, Paper, Skeleton, Typography } from "@mui/material";
 import { useState } from "react";
-import { useParams, useRouteLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigation } from "react-router-dom";
 
 export default function () {
-  const { id } = useParams();
-  const [account, setAccount] = useState<Account>();
-
-  const user = useRouteLoaderData("root");
-
-  return <Paper style={{ padding: 20 }}>{id}</Paper>;
+  const navigation = useNavigation();
+  const { account } = useLoaderData() as { account: Account };
+  console.log(account);
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Paper style={{ padding: 20 }}>
+          <Grid container>
+            <Grid item>
+              <Typography variant="h5" component="h3">
+                Basic Information
+              </Typography>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+    </Grid>
+  );
 }

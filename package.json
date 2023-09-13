@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@boardware/argus-ts-sdk": "^0.0.14-alpha.0",
-    "@boardware/core-ts-sdk": "^0.0.56-alpha.4",
+    "@boardware/core-ts-sdk": "^0.0.56-alpha.6",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-xml": "^6.0.2",
     "@emotion/react": "^11.11.1",
@@ -38,6 +38,7 @@
     "react-router-dom": "^6.14.1",
     "react-scripts": "5.0.1",
     "recharts": "^2.7.2",
+    "redux": "^4.2.1",
     "sort-by": "^1.2.0",
     "str2ab": "^1.2.1",
     "typescript": "^4.9.5",

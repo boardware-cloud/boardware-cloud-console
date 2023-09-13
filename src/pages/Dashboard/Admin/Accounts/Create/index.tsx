@@ -1,4 +1,4 @@
-import { Role } from "@boardware/core-ts-sdk";
+import { Account, Role } from "@boardware/core-ts-sdk";
 import {
   Button,
   FormControl,

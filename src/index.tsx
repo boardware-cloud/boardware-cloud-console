@@ -46,6 +46,18 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
+        loader: () => {
+          return new Promise((resolve, reject) => {
+            accountApi
+              .getAccount()
+              .then((account) => {
+                resolve({ account: account });
+              })
+              .catch(() => {
+                resolve({});
+              });
+          });
+        },
         element: <Dashboard></Dashboard>,
         children: [
           { path: "uptime", element: <Uptime></Uptime> },
@@ -66,6 +78,18 @@ const router = createBrowserRouter([
           {
             path: "admin/users/:id",
             element: <Detail />,
+            loader: ({ params }) => {
+              return new Promise((resolve, reject) => {
+                accountApi
+                  .getAccountById({ id: params.id as string })
+                  .then((account) => {
+                    resolve({ account: account });
+                  })
+                  .catch((e) => {
+                    reject(e);
+                  });
+              });
+            },
           },
           { path: "admin/users/create", element: <CreateAccount /> },
         ],

@@ -10,17 +10,21 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Container from "@mui/material/Container";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { mainListItems } from "./listItems";
-import { Outlet, useNavigate } from "react-router-dom";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { logout } from "../../utils/account";
 import LogoutIcon from "@mui/icons-material/Logout";
-import AddModeratorIcon from "@mui/icons-material/AddModerator";
 import accountApi from "../../api/core";
 import { Account, Role } from "@boardware/core-ts-sdk";
+
+// Icon
+import AttachEmailIcon from "@mui/icons-material/AttachEmail";
+import NumbersIcon from "@mui/icons-material/Numbers";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddModeratorIcon from "@mui/icons-material/AddModerator";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 const drawerWidth: number = 200;
 
@@ -72,8 +76,11 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
+export const AccountContext = React.createContext<Account | null>(null);
+
 export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
+  const { account } = useLoaderData() as { account: Account };
   const nav = useNavigate();
   const toggleDrawer = () => {
     setOpen(!open);
@@ -84,18 +91,6 @@ export default function Dashboard() {
     logout();
     nav("/signin");
   };
-  const [account, setAccount] = React.useState<Account>();
-  const navigate = useNavigate();
-  React.useEffect(() => {
-    accountApi
-      .getAccount()
-      .then((account) => {
-        setAccount(account);
-      })
-      .catch(() => {
-        navigate("/signin");
-      });
-  }, []);
 
   const role = React.useMemo(() => {
     if (!account) return Role.User;
@@ -103,107 +98,125 @@ export default function Dashboard() {
     return Role.Root;
   }, [account]);
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="absolute" open={open}>
-        <Toolbar
-          sx={{
-            pr: "24px",
-          }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
+    <AccountContext.Provider value={account}>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="absolute" open={open}>
+          <Toolbar
             sx={{
-              marginRight: "36px",
-              ...(open && { display: "none" }),
+              pr: "24px",
             }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            sx={{ flexGrow: 1 }}>
-            Boardware Cloud Dashboard
-          </Typography>
-          <div>
             <IconButton
-              aria-controls={showAccountMenu ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={showAccountMenu ? "true" : undefined}
-              onClick={(event) => {
-                setAnchorEl(event.currentTarget);
-              }}
-              color="inherit">
-              <AccountCircleIcon />
-            </IconButton>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={showAccountMenu}
-              onClose={() => {
-                setAnchorEl(null);
-              }}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
+              sx={{
+                marginRight: "36px",
+                ...(open && { display: "none" }),
               }}>
-              <MenuItem
-                onClick={() => {
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}>
+              Boardware Cloud Dashboard
+            </Typography>
+            <div>
+              <IconButton
+                aria-controls={showAccountMenu ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={showAccountMenu ? "true" : undefined}
+                onClick={(event) => {
+                  setAnchorEl(event.currentTarget);
+                }}
+                color="inherit">
+                <AccountCircleIcon />
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={showAccountMenu}
+                onClose={() => {
                   setAnchorEl(null);
-                  nav("/dashboard/account/security");
+                }}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
                 }}>
-                <ListItemIcon>
-                  <AddModeratorIcon />
-                </ListItemIcon>
-                Security
-              </MenuItem>
-              <MenuItem onClick={singout}>
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon>
-                Logout
-              </MenuItem>
-            </Menu>
-          </div>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <Toolbar
+                <MenuItem
+                  onClick={() => navigator.clipboard.writeText(account.email)}>
+                  <ListItemIcon>
+                    <AttachEmailIcon />
+                  </ListItemIcon>
+                  {account.email}
+                </MenuItem>
+                <MenuItem
+                  onClick={() => navigator.clipboard.writeText(account.id)}>
+                  <ListItemIcon>
+                    <NumbersIcon />
+                  </ListItemIcon>
+                  {account.id}
+                </MenuItem>
+                <Divider></Divider>
+                <MenuItem
+                  onClick={() => {
+                    setAnchorEl(null);
+                    nav("/dashboard/account/security");
+                  }}>
+                  <ListItemIcon>
+                    <AddModeratorIcon />
+                  </ListItemIcon>
+                  Security
+                </MenuItem>
+                <Divider></Divider>
+                <MenuItem onClick={singout}>
+                  <ListItemIcon>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </div>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <Toolbar
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              px: [1],
+            }}>
+            <IconButton onClick={toggleDrawer}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </Toolbar>
+          <Divider />
+          <List component="nav">
+            {mainListItems({ role })}
+            <Divider sx={{ my: 1 }} />
+          </List>
+        </Drawer>
+        <Box
+          component="main"
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            px: [1],
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
           }}>
-          <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </Toolbar>
-        <Divider />
-        <List component="nav">
-          {mainListItems({ role })}
-          <Divider sx={{ my: 1 }} />
-        </List>
-      </Drawer>
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
-        }}>
-        <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
-          <Outlet></Outlet>
-        </Container>
+          <Toolbar />
+          <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
+            <Outlet></Outlet>
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </AccountContext.Provider>
   );
 }

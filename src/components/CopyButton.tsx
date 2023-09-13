@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Grow } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SpellcheckIcon from "@mui/icons-material/Spellcheck";
 
@@ -18,7 +18,14 @@ const CopyButton: React.FC<IProps> = ({ text, startIcon }) => {
   }, [showCopyed]);
   return (
     <Button
-      endIcon={showCopyed && <SpellcheckIcon></SpellcheckIcon>}
+      endIcon={
+        <Grow
+          in={showCopyed}
+          style={{ transformOrigin: "0 0 0" }}
+          {...(showCopyed ? { timeout: 250 } : {})}>
+          <SpellcheckIcon></SpellcheckIcon>
+        </Grow>
+      }
       startIcon={startIcon}
       onClick={() => {
         setShowCopyed(true);
