@@ -12,9 +12,6 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  Dialog,
-  DialogActions,
-  DialogTitle,
   Link,
 } from "@mui/material";
 import { Account, WebAuthn } from "@boardware/core-ts-sdk";
@@ -22,7 +19,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import accountApi, { basePath, token } from "../../../../api/core";
 import { Decode, Encode } from "arraybuffer-encoding/base64/url";
 import { useNavigate } from "react-router-dom";
-import { Space, Tag } from "antd";
+import { Popconfirm, Space, Tag } from "antd";
 import SectionTitle from "../../../../components/SectionTitle";
 // Icon
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
@@ -42,8 +39,6 @@ const TwoFactor: React.FC = () => {
   const [webAuths, setWebAuths] = useState<WebAuthn[]>([]);
   const [account, setAccount] = useState<Account>();
   const [factors, setFactors] = useState<string[]>([]);
-  const [showDeleteTotp, setShowDeleteTotp] = useState(false);
-  const [deleteWebAuthnTarget, setDeleteWebAuthnTarget] = useState<string>();
   const hasTotp = useMemo(() => {
     return factors.findIndex((factor) => factor === "TOTP") !== -1;
   }, [factors]);
@@ -186,11 +181,16 @@ const TwoFactor: React.FC = () => {
                   <ListItem
                     key={webAuth.id}
                     secondaryAction={
-                      <IconButton
-                        onClick={() => setDeleteWebAuthnTarget(webAuth.id)}
-                        edge="end">
-                        <DeleteForeverIcon />
-                      </IconButton>
+                      <Popconfirm
+                        title="Delete security keys"
+                        description="Are you sure to delete security keys?"
+                        okText="Yes"
+                        onConfirm={() => deleteWebauthn(webAuth.id)}
+                        cancelText="No">
+                        <IconButton edge="end">
+                          <DeleteForeverIcon />
+                        </IconButton>
+                      </Popconfirm>
                     }>
                     <ListItemIcon>
                       <FingerprintIcon />
@@ -249,11 +249,16 @@ const TwoFactor: React.FC = () => {
             secondaryAction={
               <>
                 {hasTotp ? (
-                  <IconButton
-                    onClick={() => setShowDeleteTotp(true)}
-                    edge="end">
-                    <DeleteForeverIcon />
-                  </IconButton>
+                  <Popconfirm
+                    title="Delete TOTP"
+                    description="Are you sure to delete TOTP?"
+                    okText="Yes"
+                    onConfirm={deleteTotp}
+                    cancelText="No">
+                    <IconButton edge="end">
+                      <DeleteForeverIcon />
+                    </IconButton>
+                  </Popconfirm>
                 ) : (
                   <IconButton
                     onClick={() => {
@@ -281,48 +286,6 @@ const TwoFactor: React.FC = () => {
           <Divider variant="inset" component="li" />
         </List>
       </Grid>
-      <Dialog
-        onClose={() => setShowDeleteTotp(false)}
-        open={showDeleteTotp}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Confirm delete TOTP</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setShowDeleteTotp(false)} autoFocus>
-            Cancel
-          </Button>
-          <Button
-            color="warning"
-            onClick={() => {
-              deleteTotp();
-              setShowDeleteTotp(false);
-            }}>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        onClose={() => setDeleteWebAuthnTarget(undefined)}
-        open={deleteWebAuthnTarget !== undefined}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">
-          Confirm delete Security keys
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setDeleteWebAuthnTarget(undefined)} autoFocus>
-            Cancel
-          </Button>
-          <Button
-            color="warning"
-            onClick={() => {
-              deleteWebauthn(deleteWebAuthnTarget!);
-              setDeleteWebAuthnTarget(undefined);
-            }}>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Grid>
   );
 };

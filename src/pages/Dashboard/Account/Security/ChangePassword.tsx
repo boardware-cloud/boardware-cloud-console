@@ -120,7 +120,6 @@ const ChangePassword: React.FC = () => {
           style={{ marginRight: 10 }}>
           Update password
         </Button>
-        {/* <Button>I forgot my password</Button> */}
       </Grid>
     </Grid>
   );
