@@ -54,7 +54,8 @@ const router = createBrowserRouter([
                 resolve({ account: account });
               })
               .catch(() => {
-                resolve({});
+                window.localStorage.removeItem("token");
+                window.location.href = "/signin";
               });
           });
         },
