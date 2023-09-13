@@ -15,9 +15,8 @@ import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { logout } from "../../utils/account";
 import LogoutIcon from "@mui/icons-material/Logout";
-import accountApi from "../../api/core";
 import { Account, Role } from "@boardware/core-ts-sdk";
-
+import { useSnackbar } from "notistack";
 // Icon
 import AttachEmailIcon from "@mui/icons-material/AttachEmail";
 import NumbersIcon from "@mui/icons-material/Numbers";
@@ -81,6 +80,7 @@ export const AccountContext = React.createContext<Account | null>(null);
 export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const { account } = useLoaderData() as { account: Account };
+  const { enqueueSnackbar } = useSnackbar();
   const nav = useNavigate();
   const toggleDrawer = () => {
     setOpen(!open);
@@ -88,6 +88,7 @@ export default function Dashboard() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const showAccountMenu = Boolean(anchorEl);
   const singout = () => {
+    enqueueSnackbar("Signout", { variant: "success" });
     logout();
     nav("/signin");
   };
@@ -147,14 +148,26 @@ export default function Dashboard() {
                   "aria-labelledby": "basic-button",
                 }}>
                 <MenuItem
-                  onClick={() => navigator.clipboard.writeText(account.email)}>
+                  onClick={() => {
+                    enqueueSnackbar("Email Copied.", {
+                      variant: "success",
+                      preventDuplicate: true,
+                    });
+                    navigator.clipboard.writeText(account.email);
+                  }}>
                   <ListItemIcon>
                     <AttachEmailIcon />
                   </ListItemIcon>
                   {account.email}
                 </MenuItem>
                 <MenuItem
-                  onClick={() => navigator.clipboard.writeText(account.id)}>
+                  onClick={() => {
+                    enqueueSnackbar("ID Copied.", {
+                      variant: "success",
+                      preventDuplicate: true,
+                    });
+                    navigator.clipboard.writeText(account.id);
+                  }}>
                   <ListItemIcon>
                     <NumbersIcon />
                   </ListItemIcon>

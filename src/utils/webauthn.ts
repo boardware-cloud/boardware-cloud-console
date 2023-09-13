@@ -95,10 +95,6 @@ export function createWebAuthn() {
       });
     })
     .then((resp) => resp.json())
-    .then((json) => {
-      console.log(json);
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+    .then((json) => {})
+    .catch((e) => {});
 }

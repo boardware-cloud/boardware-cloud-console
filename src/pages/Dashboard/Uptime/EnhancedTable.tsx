@@ -16,9 +16,10 @@ import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { Monitor } from "@boardware/argus-ts-sdk";
+import { Monitor, MonitorStatus } from "@boardware/argus-ts-sdk";
 import SettingsIcon from "@mui/icons-material/Settings";
 import monitorApi from "../../../api/monitor";
+import { Tag } from "antd";
 interface Data {
   calories: number;
   carbs: number;
@@ -172,6 +173,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
+function StatusTag(status: MonitorStatus) {
+  if (status === MonitorStatus.Actived) {
+    return <Tag color="#55acee">Actived</Tag>;
+  } else {
+    return <Tag color="#8E8E8E">Disactived</Tag>;
+  }
+}
+
 const EnhancedTable: React.FC = ({}) => {
   const [monitors, setMonitors] = React.useState<Monitor[]>([]);
   const [order, setOrder] = React.useState<Order>("asc");
@@ -259,7 +268,7 @@ const EnhancedTable: React.FC = ({}) => {
                     <TableCell align="right">
                       {row.interval / 60} minutes
                     </TableCell>
-                    <TableCell align="right">{row.status}</TableCell>
+                    <TableCell align="right">{StatusTag(row.status)}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={() => materialDetail(row.id)}>
                         <SettingsIcon />

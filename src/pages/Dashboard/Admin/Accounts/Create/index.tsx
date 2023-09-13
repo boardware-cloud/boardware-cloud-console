@@ -1,4 +1,4 @@
-import { Account, Role } from "@boardware/core-ts-sdk";
+import { Role } from "@boardware/core-ts-sdk";
 import {
   Button,
   FormControl,
@@ -18,12 +18,15 @@ import {
   validatePassword,
 } from "../../../../../utils/password";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 export default function () {
   const nav = useNavigate();
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
   const [role, setRole] = useState<Role>(Role.User);
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,7 +43,11 @@ export default function () {
         },
       })
       .then(() => {
+        enqueueSnackbar("Created!", { variant: "success" });
         nav("/dashboard/admin/users");
+      })
+      .catch(() => {
+        setEmailError("Email exists.");
       });
   };
   return (
@@ -54,6 +61,8 @@ export default function () {
         <Grid item>Create Account</Grid>
         <Grid item>
           <TextField
+            error={emailError !== ""}
+            helperText={emailError}
             size="small"
             value={email}
             type={"email"}

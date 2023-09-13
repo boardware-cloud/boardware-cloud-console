@@ -1,12 +1,9 @@
 import { Account } from "@boardware/core-ts-sdk";
 import { Grid, Paper, Skeleton, Typography } from "@mui/material";
-import { useState } from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
 
 export default function () {
-  const navigation = useNavigation();
   const { account } = useLoaderData() as { account: Account };
-  console.log(account);
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>

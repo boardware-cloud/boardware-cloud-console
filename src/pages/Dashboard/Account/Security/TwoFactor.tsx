@@ -1,4 +1,3 @@
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Button,
   Collapse,
@@ -24,14 +23,15 @@ import accountApi, { basePath, token } from "../../../../api/core";
 import { Decode, Encode } from "arraybuffer-encoding/base64/url";
 import { useNavigate } from "react-router-dom";
 import { Space, Tag } from "antd";
+import SectionTitle from "../../../../components/SectionTitle";
 // Icon
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import PrivacyTipIcon from "@mui/icons-material/PrivacyTip";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AddIcon from "@mui/icons-material/Add";
 import AppSettingsAltIcon from "@mui/icons-material/AppSettingsAlt";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import SectionTitle from "../../../../components/SectionTitle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const TwoFactor: React.FC = () => {
