@@ -1,4 +1,4 @@
-import { TextField, Grid, Button } from "@mui/material";
+import { TextField, Grid, Button, FormHelperText } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import SectionTitle from "../../../../components/SectionTitle";
 import accountApi from "../../../../api/core";
@@ -15,6 +15,7 @@ const ChangePassword: React.FC = () => {
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmError, setConfirmError] = useState(false);
+  const [capslock, setCapslock] = React.useState(false);
   useEffect(() => {
     if (validatePassword(newPassword)) {
       setNewPasswordError("");
@@ -60,9 +61,12 @@ const ChangePassword: React.FC = () => {
       <Grid item>
         <TextField
           size="small"
-          onKeyDown={onEnter(() => {
-            updatePassword();
-          })}
+          onKeyDown={(e) => {
+            setCapslock(e.getModifierState("CapsLock"));
+            onEnter(() => {
+              updatePassword();
+            })(e);
+          }}
           style={{ width: 360 }}
           error={oldPasswordError}
           type="password"
@@ -73,9 +77,12 @@ const ChangePassword: React.FC = () => {
       </Grid>
       <Grid item>
         <TextField
-          onKeyDown={onEnter(() => {
-            updatePassword();
-          })}
+          onKeyDown={(e) => {
+            setCapslock(e.getModifierState("CapsLock"));
+            onEnter(() => {
+              updatePassword();
+            })(e);
+          }}
           helperText={newPasswordError}
           error={newPasswordError !== ""}
           style={{ width: 360 }}
@@ -91,13 +98,21 @@ const ChangePassword: React.FC = () => {
           style={{ width: 360 }}
           error={confirmError}
           type="password"
-          onKeyDown={onEnter(() => {
-            updatePassword();
-          })}
+          onKeyDown={(e) => {
+            setCapslock(e.getModifierState("CapsLock"));
+            onEnter(() => {
+              updatePassword();
+            })(e);
+          }}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           label="Confirm new password"></TextField>
       </Grid>
+      {capslock && (
+        <Grid item>
+          <FormHelperText error={true}>Caps Lock IS ENABLED</FormHelperText>
+        </Grid>
+      )}
       <Grid item>
         <Button
           onClick={updatePassword}

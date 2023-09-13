@@ -11,7 +11,7 @@ import Copyright from "../../components/Copyright";
 import { message } from "antd";
 import { ResponseError } from "@boardware/argus-ts-sdk";
 import accountApi, { ticketApi } from "../../api/core";
-import { Alert, Chip } from "@mui/material";
+import { Alert, Chip, FormHelperText } from "@mui/material";
 import VerificationCodeButton from "../../components/VerificationCodeButton";
 import {
   Ticket,
@@ -23,6 +23,7 @@ import CenterForm from "../../components/CenterForm";
 import EmailIcon from "@mui/icons-material/Email";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
+import KeyboardCapslockIcon from "@mui/icons-material/KeyboardCapslock";
 
 enum Stage {
   EMAIL,
@@ -66,6 +67,7 @@ export default function SignIn() {
   const [formLoading, setFormLoading] = React.useState(false);
   const [totpError, setTotpError] = React.useState(false);
   const [loadingWebauthn, setLoadingWebauthn] = React.useState(false);
+  const [capslock, setCapslock] = React.useState(false);
   React.useEffect(() => {
     setFormLoading(loadingWebauthn);
   }, [loadingWebauthn]);
@@ -322,6 +324,8 @@ export default function SignIn() {
         {stage === Stage.PASSWORD && (
           <Box component="form" onSubmit={verificationPassword} noValidate>
             <TextField
+              helperText={capslock ? "Caps Lock IS ENABLED" : ""}
+              onKeyDown={(e) => setCapslock(e.getModifierState("CapsLock"))}
               error={passwordError}
               onChange={(e) => {
                 setPasswordError(false);
