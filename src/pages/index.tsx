@@ -7,7 +7,7 @@ const defaultTheme = createTheme();
 function Root() {
   return (
     <ThemeProvider theme={defaultTheme}>
-      <SnackbarProvider maxSnack={5} preventDuplicate>
+      <SnackbarProvider autoHideDuration={2500} maxSnack={5} preventDuplicate>
         <Outlet />
       </SnackbarProvider>
     </ThemeProvider>

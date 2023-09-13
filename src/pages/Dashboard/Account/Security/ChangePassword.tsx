@@ -5,8 +5,10 @@ import accountApi from "../../../../api/core";
 import { sha256 } from "../../../../utils/account";
 import { onEnter } from "../../../../utils/keyboard";
 import { passwordHelpText, validatePassword } from "../../../../utils/password";
+import { useSnackbar } from "notistack";
 
 const ChangePassword: React.FC = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [oldPassword, setOldPassword] = useState("");
   const [oldPasswordError, setOldPasswordError] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -44,6 +46,7 @@ const ChangePassword: React.FC = () => {
         setConfirmPassword("");
         setConfirmError(false);
         setOldPasswordError(false);
+        enqueueSnackbar("Password updated.", { variant: "success" });
       })
       .catch(() => {
         setOldPasswordError(true);

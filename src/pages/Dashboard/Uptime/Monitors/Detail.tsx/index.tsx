@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import monitorApi from "../../../../../api/monitor";
 import {
   Monitor,
@@ -28,21 +28,18 @@ import PauseIcon from "@mui/icons-material/Pause";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import CopyButton from "../../../../../components/CopyButton";
+import { useSnackbar } from "notistack";
+
+const pollingInveral = 10000;
 
 const MonitorDetail: React.FC = () => {
   let { id } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const [monitor, setMonitor] = React.useState<Monitor | undefined>();
+  const monitorInit = useLoaderData() as { monitor: Monitor };
+  const [monitor, setMonitor] = React.useState(monitorInit.monitor);
   const [records, setRecords] = React.useState<MonitoringRecord[]>([]);
-  const [showCopyed, setShowCopyed] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  useEffect(() => {
-    if (showCopyed) {
-      setTimeout(() => {
-        setShowCopyed(false);
-      }, 3000);
-    }
-  }, [showCopyed]);
   const getRecords = (id: string) => {
     monitorApi
       .listMonitoringRecords({ id, limit: 30, index: 0 })
@@ -53,9 +50,14 @@ const MonitorDetail: React.FC = () => {
       .catch((e) => console.log(e));
   };
   const deleteMonitor = () => {
-    monitorApi.deleteMonitor({ id: id! }).then(() => {
-      navigate("/dashboard/uptime");
-    });
+    monitorApi
+      .deleteMonitor({ id: id! })
+      .then(() => {
+        navigate("/dashboard/uptime");
+      })
+      .then(() => {
+        enqueueSnackbar("Monitor deleted", { variant: "success" });
+      });
   };
   useEffect(() => {
     if (!id) return;
@@ -68,7 +70,7 @@ const MonitorDetail: React.FC = () => {
     getRecords(id!);
 
     const polling = () => {
-      const intervalId = setInterval(getRecords, 10000, [id]);
+      const intervalId = setInterval(getRecords, pollingInveral, [id]);
       return () => {
         clearInterval(intervalId);
       };

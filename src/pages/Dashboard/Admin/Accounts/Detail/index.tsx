@@ -1,6 +1,6 @@
 import { Account } from "@boardware/core-ts-sdk";
-import { Grid, Paper, Skeleton, Typography } from "@mui/material";
-import { useLoaderData, useNavigation } from "react-router-dom";
+import { Grid, Paper, Typography } from "@mui/material";
+import { useLoaderData } from "react-router-dom";
 
 export default function () {
   const { account } = useLoaderData() as { account: Account };

@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React from "react";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import monitorApi from "../../../../api/monitor";
 import MonitorForm from "../../../../components/MonitorForm";
 import { Monitor } from "@boardware/argus-ts-sdk";
 import { useSnackbar } from "notistack";
+
 const Create: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const { id } = useParams();
-  const [monitor, setMonitor] = useState<Monitor | undefined>();
-  useEffect(() => {
-    monitorApi.getMonitor({ id: id! }).then((monitor) => {
-      setMonitor(monitor);
-    });
-  }, [id]);
+  const { monitor } = useLoaderData() as { monitor: Monitor };
   return (
     <>
       {monitor && (

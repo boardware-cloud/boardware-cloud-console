@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import {
   createBrowserRouter,
+  LoaderFunctionArgs,
   RouterProvider,
   useNavigate,
 } from "react-router-dom";
@@ -22,10 +23,19 @@ import Admin from "./pages/Dashboard/Admin";
 import Detail from "./pages/Dashboard/Admin/Accounts/Detail";
 import CreateAccount from "./pages/Dashboard/Admin/Accounts/Create";
 import accountApi from "./api/core";
+import monitorApi from "./api/monitor";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+function loadMonitor({ params }: LoaderFunctionArgs) {
+  return new Promise((resolve, reject) => {
+    monitorApi.getMonitor({ id: params.id! }).then((monitor) => {
+      resolve({ monitor: monitor });
+    });
+  });
+}
 
 const router = createBrowserRouter([
   {
@@ -66,11 +76,15 @@ const router = createBrowserRouter([
             path: "uptime/create",
             element: <Create />,
           },
-          { path: "uptime/monitors/:id", element: <MonitorDetail /> },
-
+          {
+            path: "uptime/monitors/:id",
+            element: <MonitorDetail />,
+            loader: loadMonitor,
+          },
           {
             path: "uptime/monitors/:id/edit",
             element: <Edit />,
+            loader: loadMonitor,
           },
           { path: "account", element: <Account /> },
           { path: "account/security", element: <Security /> },
