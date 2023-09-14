@@ -30,7 +30,7 @@ import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import CopyButton from "../../../../../components/CopyButton";
 import { useSnackbar } from "notistack";
 
-const pollingInveral = 10000;
+const pollingInveral = 30000;
 
 const MonitorDetail: React.FC = () => {
   let { id } = useParams();

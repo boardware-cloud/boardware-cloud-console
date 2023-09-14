@@ -108,7 +108,7 @@ const router = createBrowserRouter([
           { path: "admin/users", element: <Admin /> },
           {
             path: "admin/users/:id",
-            element: <Detail />,
+            element: <Info />,
             loader: loadAccountById,
           },
           { path: "admin/users/create", element: <CreateAccount /> },
