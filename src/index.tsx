@@ -20,7 +20,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Totp from "./pages/Dashboard/Account/totp";
 import Security from "./pages/Dashboard/Account/Security";
 import Admin from "./pages/Dashboard/Admin";
-import Detail from "./pages/Dashboard/Admin/Accounts/Detail";
 import CreateAccount from "./pages/Dashboard/Admin/Accounts/Create";
 import accountApi from "./api/core";
 import monitorApi from "./api/monitor";

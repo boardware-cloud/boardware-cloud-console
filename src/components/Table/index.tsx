@@ -18,7 +18,7 @@ export interface ColumnsIProps {
 
 interface IProps {
   columns: Array<ColumnsIProps>;
-  rows: Array<Map<string, React.ReactNode>>;
+  rows: Array<{ key: string; columns: Map<string, React.ReactNode> }>;
   pagination?: {
     count: number;
     rowsPerPage: number;
@@ -54,13 +54,13 @@ export default function (props: IProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.rows.map((row, i) => {
+          {props.rows.map((row) => {
             return (
-              <TableRow key={i}>
+              <TableRow key={row.key}>
                 {props.columns.map((column) => {
                   return (
                     <TableCell style={column.style} key={column.key}>
-                      {row.get(column.key)}
+                      {row.columns.get(column.key)}
                     </TableCell>
                   );
                 })}

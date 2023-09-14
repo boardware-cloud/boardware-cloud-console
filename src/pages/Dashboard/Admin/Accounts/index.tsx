@@ -2,11 +2,9 @@ import { Account, Pagination, Role } from "@boardware/core-ts-sdk";
 import React, { useEffect, useMemo, useState } from "react";
 import accountApi from "../../../../api/core";
 import Table, { ColumnsIProps } from "../../../../components/Table";
-import { Tag } from "antd";
-
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CopyButton from "../../../../components/CopyButton";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import RoleTag from "../../../../components/RoleTag";
@@ -19,7 +17,10 @@ function DetailButton(onClick: () => void) {
   );
 }
 
+const rowsPerPageOptions = [5, 10, 20, 25];
+
 const Accounts: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const nav = useNavigate();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
@@ -27,6 +28,7 @@ const Accounts: React.FC = () => {
     total: 0,
     limit: 5,
   });
+
   const columns = useMemo(() => {
     return [
       { title: "Email", key: "email" },
@@ -47,18 +49,21 @@ const Accounts: React.FC = () => {
       },
     ] as Array<ColumnsIProps>;
   }, [accounts]);
-  const rows = useMemo(() => {
-    return accounts.map((account) => {
-      return new Map<string, React.ReactNode>([
-        ["email", <CopyButton text={account.email} />],
-        ["role", RoleTag(account.role)],
-        [
-          "detail",
-          DetailButton(() => nav("/dashboard/admin/users/" + account.id)),
-        ],
-      ]);
-    });
-  }, [accounts]);
+  const rows = useMemo(
+    () =>
+      accounts.map((account) => ({
+        key: account.id,
+        columns: new Map<string, React.ReactNode>([
+          ["email", <CopyButton text={account.email} />],
+          ["role", RoleTag(account.role)],
+          [
+            "detail",
+            DetailButton(() => nav("/dashboard/admin/users/" + account.id)),
+          ],
+        ]),
+      })),
+    [accounts]
+  );
   const listAccount = (index: number, limit: number) => {
     accountApi.listAccount({ index, limit }).then((accountList) => {
       setAccounts(accountList.data);
@@ -66,21 +71,30 @@ const Accounts: React.FC = () => {
     });
   };
   useEffect(() => {
-    listAccount(pagination.index, pagination.limit);
-  }, []);
+    listAccount(
+      Number(searchParams.get("index")) || 0,
+      Number(searchParams.get("limit")) || 5
+    );
+  }, [searchParams]);
   return Table({
     columns: columns,
     rows: rows,
     pagination: {
-      rowsPerPageOptions: [5, 10, 20, 25],
+      rowsPerPageOptions: rowsPerPageOptions,
       page: pagination.index,
       count: pagination.total,
       rowsPerPage: pagination.limit,
-      onPageChange: (_: any, page: number) => {
-        listAccount(page, pagination.limit);
+      onPageChange: (_: any, index: number) => {
+        setSearchParams({
+          index: `${index}`,
+          limit: `${Number(searchParams.get("limit")) || 5}`,
+        });
       },
       onRowsPerPageChange: (limit: number) => {
-        listAccount(0, limit);
+        setSearchParams({
+          index: `${Number(searchParams.get("index")) || 0}`,
+          limit: `${limit}`,
+        });
       },
     },
   });
