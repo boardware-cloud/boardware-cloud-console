@@ -6,7 +6,7 @@ export interface Stack {
 }
 
 interface IProps {
-  stacks: Stack[];
+  stacks: Array<Stack>;
 }
 
 const Breadcrumbs: React.FC<IProps> = ({ stacks }) => {

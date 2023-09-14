@@ -196,6 +196,15 @@ const TwoFactor: React.FC = () => {
                       <FingerprintIcon />
                     </ListItemIcon>
                     {webAuth.name}
+                    <span
+                      style={{
+                        marginLeft: 5,
+                        fontWeight: "lighter",
+                        fontSize: 14,
+                      }}>
+                      - registered on{" "}
+                      {new Date(webAuth.createdAt * 1000).toDateString()}
+                    </span>
                   </ListItem>
                 );
               })}
