@@ -125,7 +125,7 @@ export default function Dashboard() {
               color="inherit"
               noWrap
               sx={{ flexGrow: 1 }}>
-              Boardware Cloud Dashboard
+              Boardware Cloud
             </Typography>
             <div>
               <IconButton

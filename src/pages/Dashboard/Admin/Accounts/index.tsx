@@ -1,4 +1,4 @@
-import { Account, Pagination, Role } from "@boardware/core-ts-sdk";
+import { Account, Pagination } from "@boardware/core-ts-sdk";
 import React, { useEffect, useMemo, useState } from "react";
 import accountApi from "../../../../api/core";
 import Table, { ColumnsIProps } from "../../../../components/Table";
