@@ -13,11 +13,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import accountApi, { verificationApi } from "../../api/core";
 import { VerificationCodePurpose } from "@boardware/core-ts-sdk";
-import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { sha256 } from "../../utils/account";
 import { ResponseError } from "@boardware/argus-ts-sdk";
@@ -35,7 +33,6 @@ const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const [messageApi, contextHolder] = message.useMessage();
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -85,12 +82,9 @@ const Signup: React.FC = () => {
         },
       })
       .then(() => {
-        messageApi.success("Success");
         nav("/signin");
       })
-      .catch(() => {
-        messageApi.error("Fail");
-      });
+      .catch(() => {});
   };
   return (
     <CenterForm>

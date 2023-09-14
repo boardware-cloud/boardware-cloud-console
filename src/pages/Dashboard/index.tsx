@@ -24,6 +24,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddModeratorIcon from "@mui/icons-material/AddModerator";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
 const drawerWidth: number = 200;
 
@@ -174,6 +175,16 @@ export default function Dashboard() {
                   {account.id}
                 </MenuItem>
                 <Divider></Divider>
+                <MenuItem
+                  onClick={() => {
+                    setAnchorEl(null);
+                    nav("/dashboard/account/info");
+                  }}>
+                  <ListItemIcon>
+                    <PersonOutlineIcon />
+                  </ListItemIcon>
+                  Account Information
+                </MenuItem>
                 <MenuItem
                   onClick={() => {
                     setAnchorEl(null);

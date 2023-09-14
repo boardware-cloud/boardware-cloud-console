@@ -9,16 +9,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CopyButton from "../../../../components/CopyButton";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-
-function RoleTag(role: Role) {
-  switch (role) {
-    case Role.Admin:
-      return <Tag color="#55acee">Admin</Tag>;
-    case Role.Root:
-      return <Tag color="#3b5999">Root</Tag>;
-  }
-  return <Tag color="#55acee">User</Tag>;
-}
+import RoleTag from "../../../../components/RoleTag";
 
 function DetailButton(onClick: () => void) {
   return (

@@ -11,7 +11,7 @@ import Copyright from "../../components/Copyright";
 import { message } from "antd";
 import { ResponseError } from "@boardware/argus-ts-sdk";
 import accountApi, { ticketApi } from "../../api/core";
-import { Alert, Chip, FormHelperText } from "@mui/material";
+import { Alert, Chip } from "@mui/material";
 import VerificationCodeButton from "../../components/VerificationCodeButton";
 import {
   Ticket,
@@ -23,7 +23,6 @@ import CenterForm from "../../components/CenterForm";
 import EmailIcon from "@mui/icons-material/Email";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
-import KeyboardCapslockIcon from "@mui/icons-material/KeyboardCapslock";
 
 enum Stage {
   EMAIL,

@@ -24,6 +24,7 @@ import Detail from "./pages/Dashboard/Admin/Accounts/Detail";
 import CreateAccount from "./pages/Dashboard/Admin/Accounts/Create";
 import accountApi from "./api/core";
 import monitorApi from "./api/monitor";
+import Info from "./pages/Dashboard/Account/Info";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -34,6 +35,32 @@ function loadMonitor({ params }: LoaderFunctionArgs) {
     monitorApi.getMonitor({ id: params.id! }).then((monitor) => {
       resolve({ monitor: monitor });
     });
+  });
+}
+
+function loadAccount() {
+  return new Promise((resolve, reject) => {
+    accountApi
+      .getAccount()
+      .then((account) => {
+        resolve({ account: account });
+      })
+      .catch((e) => {
+        reject(e);
+      });
+  });
+}
+
+function loadAccountById({ params }: LoaderFunctionArgs) {
+  return new Promise((resolve, reject) => {
+    accountApi
+      .getAccountById({ id: params.id as string })
+      .then((account) => {
+        resolve({ account: account });
+      })
+      .catch((e) => {
+        reject(e);
+      });
   });
 }
 
@@ -56,19 +83,7 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        loader: () => {
-          return new Promise((resolve, reject) => {
-            accountApi
-              .getAccount()
-              .then((account) => {
-                resolve({ account: account });
-              })
-              .catch(() => {
-                window.localStorage.removeItem("token");
-                window.location.href = "/signin";
-              });
-          });
-        },
+        loader: loadAccount,
         element: <Dashboard></Dashboard>,
         children: [
           { path: "uptime", element: <Uptime></Uptime> },
@@ -89,22 +104,12 @@ const router = createBrowserRouter([
           { path: "account", element: <Account /> },
           { path: "account/security", element: <Security /> },
           { path: "account/security/totp", element: <Totp /> },
+          { path: "account/info", element: <Info></Info>, loader: loadAccount },
           { path: "admin/users", element: <Admin /> },
           {
             path: "admin/users/:id",
             element: <Detail />,
-            loader: ({ params }) => {
-              return new Promise((resolve, reject) => {
-                accountApi
-                  .getAccountById({ id: params.id as string })
-                  .then((account) => {
-                    resolve({ account: account });
-                  })
-                  .catch((e) => {
-                    reject(e);
-                  });
-              });
-            },
+            loader: loadAccountById,
           },
           { path: "admin/users/create", element: <CreateAccount /> },
         ],

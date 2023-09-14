@@ -37,8 +37,8 @@ const Heartbeat: React.FC<IProps> = ({ records }) => {
       xAxis: {
         type: "category",
         data: statistic.map((r) => {
-          const date = new Date(r.checkedAt);
-          return `${date.getHours()}:${date.getMinutes()}`;
+          const date = new Date(r.checkedAt * 1000);
+          return date.toLocaleString();
         }),
       },
       yAxis: {
