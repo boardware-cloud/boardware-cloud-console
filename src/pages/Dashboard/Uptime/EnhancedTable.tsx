@@ -75,12 +75,6 @@ const headCells: readonly HeadCell[] = [
     label: "Description",
   },
   {
-    id: "interval",
-    numeric: true,
-    disablePadding: false,
-    label: "Check interval",
-  },
-  {
     id: "status",
     numeric: true,
     disablePadding: false,
@@ -264,9 +258,8 @@ const EnhancedTable: React.FC = ({}) => {
                       {row.id}
                     </TableCell>
                     <TableCell align="right">{row.name}</TableCell>
-                    <TableCell align="right">{row.description}</TableCell>
                     <TableCell align="right">
-                      {row.interval / 60} minutes
+                      {row.httpMonitor!.interval! / 60} minutes
                     </TableCell>
                     <TableCell align="right">{StatusTag(row.status)}</TableCell>
                     <TableCell align="right">

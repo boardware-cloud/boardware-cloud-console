@@ -5,7 +5,6 @@ import {
   Button,
   Divider,
   FormControl,
-  FormHelperText,
   Grid,
   IconButton,
   InputLabel,
@@ -23,13 +22,11 @@ import SendIcon from "@mui/icons-material/Send";
 import {
   HttpMethod,
   PutMonitorRequest,
-  NotificationType,
   MonitorStatus,
   MonitorType,
   BodyForm,
-  ContentType,
   Pair,
-  HttpBody,
+  NotificationType,
 } from "@boardware/argus-ts-sdk";
 import Settings from "./Settings";
 import Headers from "./Headers";
@@ -69,11 +66,6 @@ const MonitorForm: React.FC<IProps> = (props) => {
   const [name, setName] = useState(props.name || "");
   const [description, setDescription] = useState(props.description || "");
   const [retries, setRetries] = useState(3);
-  const [bodyForm, setBodyForm] = useState<undefined | BodyForm>(
-    props.bodyForm
-  );
-  const [bodyRaw, setBodyRaw] = useState("");
-  const [contentType, setContentType] = useState<ContentType>(ContentType.Json);
   const [headers, setHeaders] = useState<Pair[]>(() => {
     return props.headers || [];
   });
@@ -111,35 +103,51 @@ const MonitorForm: React.FC<IProps> = (props) => {
     if (name === "" || url === "" || to === "" || !props.onEmit) {
       return;
     }
-    let body = {
-      form: bodyForm,
-      contentType: contentType,
-      raw: bodyRaw,
-    } as HttpBody;
     props.onEmit({
       name,
       description,
       type: MonitorType.Http,
-      interval: interval * 60,
-      timeout,
-      method: method,
-      notificationInterval: notificationInterval * 60,
+      // notificationInterval: notificationInterval * 60,
       status: MonitorStatus.Actived,
-      url: url,
-      retries: retries,
-      headers: headers,
-      notifications: [
-        {
-          type: NotificationType.Email,
-          emailReceivers: {
-            to: [to],
-            cc: [],
-            bcc: [],
+      httpMonitor: {
+        url,
+        interval: interval * 60,
+        timeout,
+        method,
+        retries,
+        headers,
+        acceptedStatusCodes,
+      },
+      notificationGroup: {
+        interval: notificationInterval * 60,
+        notifications: [
+          {
+            type: NotificationType.Email,
+            email: {
+              receivers: {
+                to: [to],
+                cc: [],
+                bcc: [],
+              },
+            },
           },
-        },
-      ],
-      acceptedStatusCodes: acceptedStatusCodes,
-      body: bodyForm ? body : undefined,
+        ],
+      },
+      // url: url,
+      // retries: retries,
+      // headers: headers,
+      // notifications: [
+      //   {
+      //     type: NotificationType.Email,
+      //     emailReceivers: {
+      //       to: [to],
+      //       cc: [],
+      //       bcc: [],
+      //     },
+      //   },
+      // ],
+      // acceptedStatusCodes: acceptedStatusCodes,
+      // body: bodyForm ? body : undefined,
     });
   }
   const inputStyle = { size: "small", margin: 0, width: `100%` };

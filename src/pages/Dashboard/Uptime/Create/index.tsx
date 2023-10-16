@@ -11,6 +11,7 @@ const Create: React.FC = () => {
     <MonitorForm
       title="Create Monitor"
       onEmit={(request) => {
+        console.log(request);
         monitorApi
           .createMonitor({
             putMonitorRequest: request,

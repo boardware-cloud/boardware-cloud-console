@@ -13,16 +13,16 @@ const Create: React.FC = () => {
 
   return (
     <MonitorForm
-      bodyForm={monitor.body ? monitor.body.form : undefined}
-      acceptedStatusCodes={monitor.acceptedStatusCodes}
-      name={monitor.name}
-      description={monitor.description}
-      interval={monitor.interval}
-      timeout={monitor.timeout}
-      url={monitor.url}
-      headers={monitor.headers}
-      notificationInterval={monitor.notificationInterval}
-      to={monitor.notifications[0].emailReceivers?.to[0]}
+      // bodyForm={monitor.body ? monitor.body.form : undefined}
+      // acceptedStatusCodes={monitor.acceptedStatusCodes}
+      // name={monitor.name}
+      // description={monitor.description}
+      // interval={monitor.interval}
+      // timeout={monitor.timeout}
+      // url={monitor.url}
+      // headers={monitor.headers}
+      // notificationInterval={monitor.notificationInterval}
+      // to={monitor.notifications[0].emailReceivers?.to[0]}
       title="Edit monitor"
       onEmit={(request) => {
         monitorApi

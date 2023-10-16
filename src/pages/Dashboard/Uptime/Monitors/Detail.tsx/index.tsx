@@ -86,22 +86,11 @@ const MonitorDetail: React.FC = () => {
       .updateMonitor({
         id: id!,
         putMonitorRequest: {
-          headers: monitor.headers,
+          httpMonitor: monitor.httpMonitor,
+          pingMonitor: monitor.pingMonitor,
           name: monitor.name,
           description: monitor.description,
           type: monitor.type,
-          interval: monitor.interval,
-          timeout: monitor.timeout,
-          method: monitor.method,
-          notificationInterval: monitor.notificationInterval,
-          status:
-            monitor.status === MonitorStatus.Actived
-              ? MonitorStatus.Disactived
-              : MonitorStatus.Actived,
-          url: monitor.url,
-          retries: monitor.retries,
-          notifications: monitor.notifications,
-          acceptedStatusCodes: monitor.acceptedStatusCodes,
         },
       })
       .then(() => {
@@ -126,7 +115,7 @@ const MonitorDetail: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <CopyButton
-                  text={monitor.url}
+                  text={monitor.httpMonitor!.url!}
                   startIcon={<InsertLinkIcon></InsertLinkIcon>}></CopyButton>
               </Grid>
 
@@ -134,7 +123,7 @@ const MonitorDetail: React.FC = () => {
                 <ButtonGroup
                   variant="contained"
                   aria-label="outlined primary button group">
-                  {monitor.status === MonitorStatus.Actived ? (
+                  {monitor.status! === MonitorStatus.Actived ? (
                     <Button
                       onClick={active}
                       variant="contained"
@@ -168,7 +157,7 @@ const MonitorDetail: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subtitle1" component={"span"}>
-                  Check every {monitor.interval} seconds
+                  Check every {monitor.httpMonitor!.interval! / 60} minutes
                 </Typography>
               </Grid>
             </Grid>
