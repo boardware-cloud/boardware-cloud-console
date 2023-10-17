@@ -80,12 +80,13 @@ const MonitorDetail: React.FC = () => {
       clean();
     };
   }, []);
-  const active = () => {
+  const active = (status: MonitorStatus) => {
     if (!monitor) return;
     monitorApi
       .updateMonitor({
         id: id!,
         putMonitorRequest: {
+          status: status,
           httpMonitor: monitor.httpMonitor,
           pingMonitor: monitor.pingMonitor,
           name: monitor.name,
@@ -125,14 +126,14 @@ const MonitorDetail: React.FC = () => {
                   aria-label="outlined primary button group">
                   {monitor.status! === MonitorStatus.Actived ? (
                     <Button
-                      onClick={active}
+                      onClick={() => active(MonitorStatus.Disactived)}
                       variant="contained"
                       startIcon={<PauseIcon />}>
                       Pause
                     </Button>
                   ) : (
                     <Button
-                      onClick={active}
+                      onClick={() => active(MonitorStatus.Actived)}
                       variant="outlined"
                       startIcon={<RestartAltIcon />}>
                       Resume
