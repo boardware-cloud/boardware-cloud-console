@@ -12,8 +12,8 @@ const Create: React.FC = () => {
   const { monitor } = useLoaderData() as { monitor: Monitor };
   return (
     <MonitorForm
-      // bodyForm={monitor.body ? monitor.body.form : undefined}
-      // acceptedStatusCodes={monitor.acceptedStatusCodes}
+      putMonitorRequest={monitor}
+      acceptedStatusCodes={monitor.httpMonitor?.acceptedStatusCodes}
       name={monitor.name}
       description={monitor.description}
       interval={monitor.httpMonitor?.interval}

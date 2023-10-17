@@ -40,6 +40,7 @@ enum MonitorConfiguration {
 }
 
 interface IProps {
+  putMonitorRequest?: PutMonitorRequest;
   name?: string;
   description?: string;
   interval?: number;
@@ -107,7 +108,6 @@ const MonitorForm: React.FC<IProps> = (props) => {
       name,
       description,
       type: MonitorType.Http,
-      // notificationInterval: notificationInterval * 60,
       status: MonitorStatus.Actived,
       httpMonitor: {
         url,
@@ -133,21 +133,6 @@ const MonitorForm: React.FC<IProps> = (props) => {
           },
         ],
       },
-      // url: url,
-      // retries: retries,
-      // headers: headers,
-      // notifications: [
-      //   {
-      //     type: NotificationType.Email,
-      //     emailReceivers: {
-      //       to: [to],
-      //       cc: [],
-      //       bcc: [],
-      //     },
-      //   },
-      // ],
-      // acceptedStatusCodes: acceptedStatusCodes,
-      // body: bodyForm ? body : undefined,
     });
   }
   const inputStyle = { size: "small", margin: 0, width: `100%` };
