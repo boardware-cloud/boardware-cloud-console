@@ -24,7 +24,6 @@ import {
   PutMonitorRequest,
   MonitorStatus,
   MonitorType,
-  BodyForm,
   Pair,
   NotificationType,
 } from "@boardware/argus-ts-sdk";
@@ -53,7 +52,6 @@ interface IProps {
   acceptedStatusCodes?: string[];
   onEmit?: (request: PutMonitorRequest) => void;
   title: string;
-  bodyForm?: BodyForm;
 }
 
 function style() {
@@ -235,12 +233,7 @@ const MonitorForm: React.FC<IProps> = (props) => {
               label={`Headers (${headers ? headers.length : 0})`}
               value={MonitorConfiguration.Headers}
             />
-            {/* <Tab label="Body" value={MonitorConfiguration.Body} /> */}
             <Tab label="Settings" value={MonitorConfiguration.Settings} />
-            {/* <Tab
-              label="Notifications"
-              value={MonitorConfiguration.Notifications}
-            /> */}
           </Tabs>
         </Grid>
         <Grid item xs={12}>
@@ -252,14 +245,6 @@ const MonitorForm: React.FC<IProps> = (props) => {
             timeout={timeout}
             setTimeout={setTimeout}
             show={settingIndex === MonitorConfiguration.Settings}></Settings>
-          {/* <Body
-            bodyRaw={bodyRaw}
-            setBodyRaw={setBodyRaw}
-            contentType={contentType}
-            setContentType={setContentType}
-            bodyForm={bodyForm}
-            setBodyForm={setBodyForm}
-            show={settingIndex === MonitorConfiguration.Body}></Body> */}
           <Box hidden={settingIndex !== MonitorConfiguration.Headers}>
             <Headers
               headers={headers}

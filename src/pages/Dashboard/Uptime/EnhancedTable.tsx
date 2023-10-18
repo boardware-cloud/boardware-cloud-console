@@ -69,10 +69,10 @@ const headCells: readonly HeadCell[] = [
     label: "Name",
   },
   {
-    id: "description",
+    id: "type",
     numeric: true,
     disablePadding: false,
-    label: "Description",
+    label: "Type",
   },
   {
     id: "status",
@@ -258,9 +258,7 @@ const EnhancedTable: React.FC = ({}) => {
                       {row.id}
                     </TableCell>
                     <TableCell align="right">{row.name}</TableCell>
-                    <TableCell align="right">
-                      {row.httpMonitor!.interval! / 60} minutes
-                    </TableCell>
+                    <TableCell align="right">{row.type}</TableCell>
                     <TableCell align="right">{StatusTag(row.status)}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={() => materialDetail(row.id)}>

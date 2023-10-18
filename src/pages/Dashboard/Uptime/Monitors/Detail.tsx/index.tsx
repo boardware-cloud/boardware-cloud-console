@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import monitorApi from "../../../../../api/monitor";
 import {
   Monitor,
   MonitorStatus,
+  MonitorType,
   MonitoringRecord,
 } from "@boardware/argus-ts-sdk";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -100,6 +101,22 @@ const MonitorDetail: React.FC = () => {
         });
       });
   };
+  const target = useMemo(() => {
+    switch (monitor.type) {
+      case MonitorType.Http:
+        return monitor.httpMonitor!.url!;
+      case MonitorType.Ping:
+        return monitor.pingMonitor!.host!;
+    }
+  }, [monitor]);
+  const interval = useMemo(() => {
+    switch (monitor.type) {
+      case MonitorType.Http:
+        return monitor.httpMonitor!.interval!;
+      case MonitorType.Ping:
+        return monitor.pingMonitor!.interval!;
+    }
+  }, [monitor]);
   return (
     <Paper sx={{ width: "100%", mb: 2 }} style={{ padding: 20 }}>
       <div>
@@ -116,7 +133,7 @@ const MonitorDetail: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <CopyButton
-                  text={monitor.httpMonitor!.url!}
+                  text={target}
                   startIcon={<InsertLinkIcon></InsertLinkIcon>}></CopyButton>
               </Grid>
 
@@ -158,7 +175,7 @@ const MonitorDetail: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subtitle1" component={"span"}>
-                  Check every {monitor.httpMonitor!.interval! / 60} minutes
+                  Check every {interval} seconds
                 </Typography>
               </Grid>
             </Grid>
