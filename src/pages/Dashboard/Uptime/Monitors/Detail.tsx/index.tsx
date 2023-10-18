@@ -112,9 +112,9 @@ const MonitorDetail: React.FC = () => {
   const interval = useMemo(() => {
     switch (monitor.type) {
       case MonitorType.Http:
-        return monitor.httpMonitor!.interval!;
+        return monitor.httpMonitor ? monitor.httpMonitor.interval || 60 : 60;
       case MonitorType.Ping:
-        return monitor.pingMonitor!.interval!;
+        return monitor.pingMonitor ? monitor.pingMonitor.interval || 60 : 60;
     }
   }, [monitor]);
   return (
