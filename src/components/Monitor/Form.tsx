@@ -243,7 +243,7 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
             <Grid item sm={12}>
               <h2>Notifications setting</h2>
             </Grid>
-            <Grid item sm={12}>
+            {/* <Grid item sm={12}>
               <Field label={"Email"}>
                 <TextField
                   type="email"
@@ -253,7 +253,7 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
                   style={{ width: `100%` }}
                 />
               </Field>
-            </Grid>
+            </Grid> */}
           </Grid>
         </div>
       </div>
