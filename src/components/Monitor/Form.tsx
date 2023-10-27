@@ -1,10 +1,10 @@
 import {
   Button,
+  Dialog,
   Grid,
   MenuItem,
   Paper,
   Select,
-  Slider,
   TextField,
 } from "@mui/material";
 import Field from "./Field";
@@ -16,7 +16,12 @@ import {
   MonitorType,
   PingMonitor,
   PutMonitorRequest,
+  Notification,
+  NotificationGroup,
+  NotificationType,
 } from "@boardware/argus-ts-sdk";
+import AddIcon from "@mui/icons-material/Add";
+import NotificationSetting from "./NotificationSetting";
 
 function style() {
   return {
@@ -172,10 +177,36 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
   const [putMonitorRequest, setPutMonitorRequest] = useState<PutMonitorRequest>(
     initMonitor || { type: MonitorType.Http, status: MonitorStatus.Actived }
   );
+  const [showNotificationSetting, setShowNotificationSetting] = useState(false);
   const httpMonitor = useMemo(() => {
     return putMonitorRequest.httpMonitor;
   }, [putMonitorRequest]);
-  const [email, setEmail] = useState("");
+  const addNotification = (notification: Notification) => {
+    let newNotificationGroup =
+      putMonitorRequest.notificationGroup ||
+      ({ interval: 60 } as NotificationGroup);
+    newNotificationGroup.notifications = [
+      ...(newNotificationGroup.notifications || []),
+      notification,
+    ];
+    setPutMonitorRequest({
+      ...putMonitorRequest,
+      notificationGroup: newNotificationGroup,
+    });
+    setShowNotificationSetting(false);
+  };
+  const deleteNotification = (i: Number) => {
+    setPutMonitorRequest({
+      ...putMonitorRequest,
+      notificationGroup: {
+        ...putMonitorRequest.notificationGroup,
+        notifications:
+          putMonitorRequest.notificationGroup?.notifications?.filter(
+            (_, index) => i !== index
+          ),
+      },
+    });
+  };
   return (
     <Paper sx={{ width: "100%", mb: 1 }} style={{ padding: 12 }}>
       <div style={{ display: "flex" }}>
@@ -195,7 +226,7 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
                     })
                   }>
                   <MenuItem value={MonitorType.Http}>Http</MenuItem>
-                  <MenuItem value={MonitorType.Ping}>Ping</MenuItem>
+                  {/* <MenuItem value={MonitorType.Ping}>Ping</MenuItem> */}
                 </Select>
               </Field>
             </Grid>
@@ -214,7 +245,7 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
                 />
               </Field>
             </Grid>
-            {putMonitorRequest.type == MonitorType.Http && (
+            {putMonitorRequest.type === MonitorType.Http && (
               <HttpMonitorSetting
                 httpMonitor={httpMonitor}
                 setHttpMonitor={(h) => {
@@ -224,7 +255,7 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
                   });
                 }}></HttpMonitorSetting>
             )}
-            {putMonitorRequest.type == MonitorType.Ping && (
+            {putMonitorRequest.type === MonitorType.Ping && (
               <PingMonitorSetting
                 pingMonitor={putMonitorRequest.pingMonitor}
                 setPingMonitor={(p) =>
@@ -243,6 +274,20 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
             <Grid item sm={12}>
               <h2>Notifications setting</h2>
             </Grid>
+            {putMonitorRequest.notificationGroup?.notifications?.map(
+              (notification, i) => {
+                return notificationCard(notification, () =>
+                  deleteNotification(i)
+                );
+              }
+            )}
+            <Grid item sm={12}>
+              <Button
+                onClick={() => setShowNotificationSetting(true)}
+                style={{ width: `100%` }}>
+                <AddIcon />
+              </Button>
+            </Grid>
             {/* <Grid item sm={12}>
               <Field label={"Email"}>
                 <TextField
@@ -257,8 +302,33 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
           </Grid>
         </div>
       </div>
+      <Dialog
+        open={showNotificationSetting}
+        onClose={() => setShowNotificationSetting(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <NotificationSetting
+          addNotification={addNotification}></NotificationSetting>
+      </Dialog>
     </Paper>
   );
 };
 
 export default MonitorForm;
+
+function notificationCard(
+  notification: Notification,
+  deleteCallback: () => void
+) {
+  return (
+    <Grid item sm={12}>
+      {notification.type === NotificationType.Email && (
+        <>
+          Email notification
+          {/* <Button>Edit</Button> */}
+          <Button onClick={deleteCallback}>Delete</Button>
+        </>
+      )}
+    </Grid>
+  );
+}
