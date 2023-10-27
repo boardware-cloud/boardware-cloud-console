@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Field from "./Field";
-import { Button, MenuItem, Paper, Select, TextField } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Paper,
+  Select,
+  Slider,
+  TextField,
+} from "@mui/material";
 import { NotificationType, Notification } from "@boardware/argus-ts-sdk";
 import TextArea from "antd/es/input/TextArea";
 
@@ -16,7 +23,13 @@ const NotificationSetting: React.FC<{
   useEffect(() => {
     setNotification({
       ...notification,
-      email: { receivers: { to: [to], cc: [cc], bcc: [bcc] } },
+      email: {
+        receivers: {
+          to: to !== "" ? [to] : [],
+          cc: cc !== "" ? [cc] : [],
+          bcc: bcc !== "" ? [bcc] : [],
+        },
+      },
     });
   }, [to, cc, bcc]);
   return (
@@ -33,6 +46,17 @@ const NotificationSetting: React.FC<{
           style={{ width: `100%` }}>
           <MenuItem value={NotificationType.Email}>Email</MenuItem>
         </Select>
+      </Field>
+      <Field label={`Cooldown: ${(notification.interval || 60) / 60} minute`}>
+        <Slider
+          max={3600}
+          min={60}
+          step={60}
+          value={notification.interval || 60}
+          onChange={(_, v) =>
+            setNotification({ ...notification, interval: v as number })
+          }
+        />
       </Field>
       <Field label="To">
         <TextField
@@ -56,7 +80,16 @@ const NotificationSetting: React.FC<{
           onChange={(e) => setBcc(e.target.value)}></TextField>
       </Field>
       <Field label="Email template">
-        <TextArea autoSize={{ minRows: 4 }} />
+        <TextArea
+          value={notification.email?.template}
+          onChange={(e) =>
+            setNotification({
+              ...notification,
+              email: { ...notification.email, template: e.target.value },
+            })
+          }
+          autoSize={{ minRows: 4 }}
+        />
       </Field>
       <Button
         onClick={() => {

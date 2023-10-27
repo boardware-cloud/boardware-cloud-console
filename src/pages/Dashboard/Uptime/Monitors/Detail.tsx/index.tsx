@@ -93,6 +93,7 @@ const MonitorDetail: React.FC = () => {
           name: monitor.name,
           description: monitor.description,
           type: monitor.type,
+          notificationGroup: monitor.notificationGroup,
         },
       })
       .then(() => {

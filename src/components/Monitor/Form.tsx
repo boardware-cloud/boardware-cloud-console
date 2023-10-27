@@ -276,7 +276,7 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
             </Grid>
             {putMonitorRequest.notificationGroup?.notifications?.map(
               (notification, i) => {
-                return notificationCard(notification, () =>
+                return notificationCard(i, notification, () =>
                   deleteNotification(i)
                 );
               }
@@ -317,11 +317,12 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
 export default MonitorForm;
 
 function notificationCard(
+  key: number,
   notification: Notification,
   deleteCallback: () => void
 ) {
   return (
-    <Grid item sm={12}>
+    <Grid key={key} item sm={12}>
       {notification.type === NotificationType.Email && (
         <>
           Email notification
