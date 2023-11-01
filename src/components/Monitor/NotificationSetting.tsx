@@ -29,6 +29,13 @@ const NotificationSetting: React.FC<{
           cc: cc !== "" ? [cc] : [],
           bcc: bcc !== "" ? [bcc] : [],
         },
+        template: `<html>
+  <body>
+    <div>Url: __TARGET__</div>
+    <div>Time: __TIME__</div>
+    <div>Status: __STATUS__</div>
+  </body>
+</html>`,
       },
     });
   }, [to, cc, bcc]);
@@ -47,7 +54,7 @@ const NotificationSetting: React.FC<{
           <MenuItem value={NotificationType.Email}>Email</MenuItem>
         </Select>
       </Field>
-      <Field label={`Cooldown: ${(notification.interval || 60) / 60} minute`}>
+      <Field label={`Cooldown: ${(notification.interval || 60) / 60} minutes`}>
         <Slider
           max={3600}
           min={60}
