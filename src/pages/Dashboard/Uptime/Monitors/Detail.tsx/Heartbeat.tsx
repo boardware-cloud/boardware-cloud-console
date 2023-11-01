@@ -29,7 +29,8 @@ const Heartbeat: React.FC<IProps> = ({ records }) => {
     const okRecords = statistic.filter((r) => r.result === MonitoringResult.Ok);
     return (
       okRecords.reduce((total, record) => record.responseTime! + total, 0) /
-      okRecords.length
+      okRecords.length /
+      1000000
     );
   }, [statistic]);
   const echartsOption = useMemo(() => {
@@ -49,7 +50,7 @@ const Heartbeat: React.FC<IProps> = ({ records }) => {
       },
       series: [
         {
-          data: statistic.map((r) => r.responseTime!),
+          data: statistic.map((r) => Math.floor(r.responseTime! / 1000000)),
           type: "line",
         },
       ],
