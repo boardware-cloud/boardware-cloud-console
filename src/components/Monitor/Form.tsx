@@ -178,22 +178,34 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
     initMonitor || { type: MonitorType.Http, status: MonitorStatus.Actived }
   );
   const [showNotificationSetting, setShowNotificationSetting] = useState(false);
+  const [editing, setEditing] = useState<number>();
+  const editingNotification = useMemo(() => {
+    if (editing === undefined) return undefined;
+    return putMonitorRequest.notificationGroup!.notifications![editing];
+  }, [editing, putMonitorRequest]);
   const httpMonitor = useMemo(() => {
     return putMonitorRequest.httpMonitor;
   }, [putMonitorRequest]);
   const addNotification = (notification: Notification) => {
-    let newNotificationGroup =
-      putMonitorRequest.notificationGroup ||
-      ({ interval: 60 } as NotificationGroup);
-    newNotificationGroup.notifications = [
-      ...(newNotificationGroup.notifications || []),
-      notification,
-    ];
-    setPutMonitorRequest({
-      ...putMonitorRequest,
-      notificationGroup: newNotificationGroup,
-    });
-    setShowNotificationSetting(false);
+    if (editing === undefined) {
+      let newNotificationGroup =
+        putMonitorRequest.notificationGroup ||
+        ({ interval: 60 } as NotificationGroup);
+      newNotificationGroup.notifications = [
+        ...(newNotificationGroup.notifications || []),
+        notification,
+      ];
+      setPutMonitorRequest({
+        ...putMonitorRequest,
+        notificationGroup: newNotificationGroup,
+      });
+      setShowNotificationSetting(false);
+    } else {
+      putMonitorRequest.notificationGroup!.notifications![editing] =
+        notification;
+      setPutMonitorRequest(putMonitorRequest);
+      setEditing(undefined);
+    }
   };
   const deleteNotification = (i: Number) => {
     setPutMonitorRequest({
@@ -226,7 +238,6 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
                     })
                   }>
                   <MenuItem value={MonitorType.Http}>Http</MenuItem>
-                  {/* <MenuItem value={MonitorType.Ping}>Ping</MenuItem> */}
                 </Select>
               </Field>
             </Grid>
@@ -276,38 +287,37 @@ const MonitorForm: React.FC<IProps> = ({ initMonitor, onSubmit }) => {
             </Grid>
             {putMonitorRequest.notificationGroup?.notifications?.map(
               (notification, i) => {
-                return notificationCard(i, notification, () =>
-                  deleteNotification(i)
+                return notificationCard(
+                  i,
+                  notification,
+                  () => {
+                    setEditing(i);
+                  },
+                  () => deleteNotification(i)
                 );
               }
             )}
             <Grid item sm={12}>
               <Button
+                variant="outlined"
                 onClick={() => setShowNotificationSetting(true)}
                 style={{ width: `100%` }}>
                 <AddIcon />
               </Button>
             </Grid>
-            {/* <Grid item sm={12}>
-              <Field label={"Email"}>
-                <TextField
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  {...style()}
-                  style={{ width: `100%` }}
-                />
-              </Field>
-            </Grid> */}
           </Grid>
         </div>
       </div>
       <Dialog
-        open={showNotificationSetting}
-        onClose={() => setShowNotificationSetting(false)}
+        open={showNotificationSetting || editingNotification !== undefined}
+        onClose={() => {
+          setEditing(undefined);
+          setShowNotificationSetting(false);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description">
         <NotificationSetting
+          init={editingNotification}
           addNotification={addNotification}></NotificationSetting>
       </Dialog>
     </Paper>
@@ -319,6 +329,7 @@ export default MonitorForm;
 function notificationCard(
   key: number,
   notification: Notification,
+  edit: () => void,
   deleteCallback: () => void
 ) {
   return (
@@ -326,8 +337,10 @@ function notificationCard(
       {notification.type === NotificationType.Email && (
         <>
           Email notification
-          {/* <Button>Edit</Button> */}
-          <Button onClick={deleteCallback}>Delete</Button>
+          <Button onClick={edit}>Edit</Button>
+          <Button variant="text" color="warning" onClick={deleteCallback}>
+            Delete
+          </Button>
         </>
       )}
     </Grid>

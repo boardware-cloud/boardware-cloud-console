@@ -12,14 +12,30 @@ import { NotificationType, Notification } from "@boardware/argus-ts-sdk";
 import TextArea from "antd/es/input/TextArea";
 
 const NotificationSetting: React.FC<{
+  init?: Notification;
   addNotification: (notification: Notification) => void;
-}> = ({ addNotification }) => {
-  const [notification, setNotification] = useState<Notification>({
-    type: NotificationType.Email,
-  });
+}> = ({ addNotification, init }) => {
+  const [notification, setNotification] = useState<Notification>(
+    init || {
+      type: NotificationType.Email,
+    }
+  );
   const [to, setTo] = useState("");
   const [cc, setCc] = useState("");
   const [bcc, setBcc] = useState("");
+  useEffect(() => {
+    if (init !== undefined) {
+      if (init.email?.receivers?.to.length !== 0) {
+        setTo(init.email!.receivers!.to[0]);
+      }
+      if (init.email?.receivers?.cc.length !== 0) {
+        setCc(init.email!.receivers!.cc[0]);
+      }
+      if (init.email?.receivers?.bcc.length !== 0) {
+        setBcc(init.email!.receivers!.bcc[0]);
+      }
+    }
+  }, []);
   useEffect(() => {
     setNotification({
       ...notification,
