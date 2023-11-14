@@ -82,8 +82,7 @@ const Signup: React.FC = () => {
       })
       .then(() => {
         nav("/signin");
-      })
-      .catch(() => {});
+      });
   };
   return (
     <CenterForm>

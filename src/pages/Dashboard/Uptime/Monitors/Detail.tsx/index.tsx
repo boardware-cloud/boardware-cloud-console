@@ -42,13 +42,10 @@ const MonitorDetail: React.FC = () => {
   const [records, setRecords] = React.useState<MonitoringRecord[]>([]);
   const [showDelete, setShowDelete] = useState(false);
   const getRecords = (id: string) => {
-    monitorApi
-      .listMonitoringRecords({ id, limit: 30, index: 0 })
-      .then((r) => {
-        if (!r) return;
-        setRecords(r.data!);
-      })
-      .catch((e) => console.log(e));
+    monitorApi.listMonitoringRecords({ id, limit: 30, index: 0 }).then((r) => {
+      if (!r) return;
+      setRecords(r.data!);
+    });
   };
   const deleteMonitor = () => {
     monitorApi
